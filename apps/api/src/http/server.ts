@@ -19,6 +19,7 @@ import { UnauthorizedError } from './_errors/unauthorized-error'
 import { authenticateFromLink } from './routes/authenticate-from-link'
 import { getUserProfile } from './routes/get-user-profile'
 import { sendMagicLink } from './routes/send-magic-link'
+import { stripeWebhook } from './routes/stripe-webhook'
 
 export const logger = pino({ name: 'Inscribe' })
 
@@ -96,16 +97,3 @@ app.ready().then(async () => {
     // await datasetService.transcribeYoutubeVideo(decoded.id, decoded.uri)
   }
 })
-function stripeWebhook(
-  instance: FastifyInstance<
-    RawServerDefault,
-    IncomingMessage,
-    ServerResponse<IncomingMessage>,
-    FastifyBaseLogger,
-    FastifyTypeProvider
-  >,
-  opts: FastifyPluginOptions,
-  done: (err?: Error | undefined) => void,
-): void {
-  throw new Error('Function not implemented.')
-}

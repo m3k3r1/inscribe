@@ -12,7 +12,7 @@ import { AuthenticationMagicLinkTemplate } from '@/mail/templates/authentication
 
 import { logger } from '../server'
 
-export async function StripeWebhookRoute(app: FastifyInstance) {
+export async function stripeWebhook(app: FastifyInstance) {
   app.addContentTypeParser(
     'application/json',
     { parseAs: 'buffer' },
