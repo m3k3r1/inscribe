@@ -1,0 +1,87 @@
+services:
+  web:
+    container_name: inscribe-web
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        - NODE_VERSION=22.1.0
+        - PROJECT=web
+        - PORT=3000
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.prod
+  api:
+    container_name: inscribe-api
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      args:
+        - NODE_VERSION=22.1.0
+        - PROJECT=api
+        - PORT=3333
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env.prod
+  postgres:
+    container_name: inscribe-pg
+    image: bitnami/postgresql:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: inscribe
+    volumes:
+      -  postgres_data:/bitnami/postgresql
+  nats-server:
+    image: nats:latest
+    container_name: inscribe-nats-server
+    ports:
+      - "4222:4222"  
+      - "8222:8222"  
+      - "6222:6222" 
+    environment:
+      - NATS_SERVER_NAME=nats-server
+    command: >
+      -V 
+      -m 8222  
+    volumes:
+      - nats_data:/nats_data  
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    restart: always
+    ports:
+      - "16686:16686"
+      - "14268"
+      - "14250"
+  otel-collector:
+    image: otel/opentelemetry-collector:0.67.0
+    restart: always
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   
+      - "8888:8888"   
+      - "8889:8889"   
+      - "13133:13133" 
+      - "4317:4317"   
+      - "4318:4318"   
+      - "55679:55679" 
+    depends_on:
+      - jaeger-all-in-one
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    restart: always
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+volumes:
+  postgres_data:
+  nats_data:

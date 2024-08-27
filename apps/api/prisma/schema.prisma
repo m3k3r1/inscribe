@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Subscription {
+  NONE
+  HOBBY
+  CREATOR
+  ULTRA
+  ENTREPRISE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  stripePriceId        String?       @map("stripe_price_id")
+  stripeSubscriptionId String?       @map("stripe_subscription_id")
+  stripeCustomerId     String?       @unique @map("stripe_customer_id")
+  subscription         Subscription?
+  isInTrial            Boolean       @default(false) @map("is_in_trial")
+  isBlocked            Boolean       @default(false) @map("is_blocked")
+
+  invites            Invite[]
+  member_on          Member[]
+  owns_organizations Organization[]
+  owns_projects      Project[]
+  usage              Usage[]
+  feedbacks          Feedback[]
+
+  @@index([stripeCustomerId])
+  @@map("users")
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@map("feedbacks")
+}
+
+model Usage {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  promptTokens     Int      @default(0) @map("prompt_tokens")
+  completionTokens Int      @default(0) @map("completion_tokens")
+  totalTokens      Int      @default(0) @map("total_tokens")
+  organizationId   String   @map("organization_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  projectId        String?  @map("project_id")
+  project          Project? @relation(fields: [projectId], references: [id])
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@map("usages")
+}
+
+model AuthLinks {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+  BILLING
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  email     String
+  role      Role
+  createdAt DateTime @default(now()) @map("created_at")
+
+  author User?   @relation(fields: [userId], references: [id])
+  userId String? @map("user_id")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
+
+  @@unique([email, organizationId])
+  @@index([email])
+  @@map("invites")
+}
+
+model Member {
+  id   String @id @default(uuid())
+  role Role   @default(MEMBER)
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@unique([organizationId, userId])
+  @@map("members")
+}
+
+model Organization {
+  id                        String   @id @default(uuid())
+  name                      String
+  slug                      String   @unique
+  domain                    String?  @unique
+  shouldAttachUsersByDomain Boolean  @default(false) @map("should_attach_users_by_domain")
+  avatarUrl                 String?  @map("avatar_url")
+  createdAt                 DateTime @default(now()) @map("created_at")
+  updatedAt                 DateTime @updatedAt @map("updated_at")
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @map("owner_id")
+
+  invites  Invite[]
+  members  Member[]
+  projects Project[]
+  datasets Datasets[]
+  blocks   Blocks[]
+  usage    Usage[]
+
+  @@map("organizations")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  slug        String   @unique
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  options Json?
+  content String?
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
+
+  owner   User    @relation(fields: [ownerId], references: [id])
+  ownerId String  @map("owner_id")
+  usage   Usage[]
+
+  @@map("projects")
+}
+
+enum DatasetType {
+  YOUTUBE
+  PDF
+}
+
+enum DatasetStatus {
+  PENDING
+  PROCESSING
+  READY
+}
+
+model Datasets {
+  id        String      @id @default(uuid())
+  name      String
+  type      DatasetType
+  uri       String
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
+
+  status DatasetStatus @default(PENDING)
+
+  blocks     Blocks[]
+  rawDataset RawDataset[]
+
+  @@map("datasets")
+}
+
+model RawDataset {
+  id        String   @id @default(uuid())
+  content   String
+  metadata  Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  dataset   Datasets @relation(fields: [datasetId], references: [id])
+  datasetId String   @map("dataset_id")
+
+  blocks   Blocks? @relation(fields: [blocksId], references: [id])
+  blocksId String?
+
+  @@map("raw_datasets")
+}
+
+model Blocks {
+  id        String   @id @default(uuid())
+  content   String
+  label     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  dataset   Datasets @relation(fields: [datasetId], references: [id])
+  datasetId String   @map("dataset_id")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
+
+  rawDataset RawDataset[]
+
+  @@map("blocks")
+}

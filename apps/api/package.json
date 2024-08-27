@@ -1,0 +1,48 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/http/server.ts | pino-pretty",
+    "dev": "pnpm env:load tsx watch src/http/server.ts | pino-pretty",
+    "db:migrate": "pnpm env:load prisma migrate dev",
+    "db:studio": "pnpm env:load prisma studio",
+    "env:load": "dotenv -e ../../.env --"
+  },
+  "devDependencies": {
+    "@saas/eslint-config": "workspace:*",
+    "@saas/prettier": "workspace:*",
+    "@saas/tsconfig": "workspace:*",
+    "@types/react": "^18",
+    "prisma": "^5.19.0",
+    "tsx": "^4.19.0"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^9.4.0",
+    "@fastify/cors": "^9.0.1",
+    "@fastify/jwt": "^8.0.1",
+    "@fastify/swagger": "^8.15.0",
+    "@fastify/swagger-ui": "^4.1.0",
+    "@prisma/client": "^5.19.0",
+    "@react-email/components": "0.0.23",
+    "@saas/auth": "workspace:*",
+    "@saas/env": "workspace:*",
+    "dotenv-cli": "^7.4.2",
+    "fastify": "^4.28.1",
+    "fastify-nats-client": "^4.1.0",
+    "fastify-plugin": "^4.5.1",
+    "fastify-type-provider-zod": "^2.0.0",
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2",
+    "react-email": "3.0.1",
+    "resend": "^4.0.0",
+    "uuidv4": "^6.2.13",
+    "zod": "^3.23.8"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@saas/eslint-config/node"
+    ]
+  },
+  "prettier": "@saas/prettier"
+}
