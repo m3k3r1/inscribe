@@ -36,20 +36,20 @@ services:
   #     POSTGRES_DB: inscribe
   #   volumes:
   #     -  postgres_data:/bitnami/postgresql
-  # nats-server:
-  #   image: nats:latest
-  #   container_name: inscribe-nats-server
-  #   ports:
-  #     - "4222:4222"  
-  #     - "8222:8222"  
-  #     - "6222:6222" 
-  #   environment:
-  #     - NATS_SERVER_NAME=nats-server
-  #   command: >
-  #     -V 
-  #     -m 8222  
-  #   volumes:
-  #     - nats_data:/nats_data  
+  nats-server:
+    image: nats:latest
+    container_name: inscribe-nats-server
+    ports:
+      - "4222:4222"  
+      - "8222:8222"  
+      - "6222:6222" 
+    environment:
+      - NATS_SERVER_NAME=nats-server
+    command: >
+      -V 
+      -m 8222  
+    volumes:
+      - nats_data:/nats_data  
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest
     restart: always
