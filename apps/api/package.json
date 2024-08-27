@@ -34,6 +34,8 @@
     "fastify-type-provider-zod": "^2.0.0",
     "pino": "^9.3.2",
     "pino-pretty": "^11.2.2",
+    "react": "^18",
+    "react-dom": "^18",
     "react-email": "3.0.1",
     "resend": "^4.0.0",
     "uuidv4": "^6.2.13",
