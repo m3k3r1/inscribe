@@ -64,6 +64,7 @@ app.register(fastifyCors)
 app.register(getUserProfile)
 app.register(sendMagicLink)
 app.register(authenticateFromLink)
+app.register(stripeWebhook)
 
 app.setErrorHandler((error, request, reply) => {
   if (error instanceof ZodError) {
@@ -95,3 +96,16 @@ app.ready().then(async () => {
     // await datasetService.transcribeYoutubeVideo(decoded.id, decoded.uri)
   }
 })
+function stripeWebhook(
+  instance: FastifyInstance<
+    RawServerDefault,
+    IncomingMessage,
+    ServerResponse<IncomingMessage>,
+    FastifyBaseLogger,
+    FastifyTypeProvider
+  >,
+  opts: FastifyPluginOptions,
+  done: (err?: Error | undefined) => void,
+): void {
+  throw new Error('Function not implemented.')
+}
