@@ -11,7 +11,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
     request.getCurrentUserId = async () => {
       try {
         const { sub } = await request.jwtVerify<{ sub: string }>()
-
+        console.log('sub', sub)
         const user = await prisma.user.findFirst({
           where: {
             id: sub,

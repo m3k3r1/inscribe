@@ -3,16 +3,14 @@ import { env } from '@saas/env'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import Stripe from 'stripe'
-import { uuid } from 'uuidv4'
-import z from 'zod'
+import { z } from 'zod'
 
 import { prisma } from '@/lib/prisma'
-import { resend } from '@/lib/resend'
-import { AuthenticationMagicLinkTemplate } from '@/mail/templates/authentication-magic-link'
+import { makeAuthService } from '@/services/factories/make-auth-service'
 
 import { logger } from '../server'
 
-export async function stripeWebhook(app: FastifyInstance) {
+export async function webhookController(app: FastifyInstance) {
   app.addContentTypeParser(
     'application/json',
     { parseAs: 'buffer' },
@@ -20,9 +18,7 @@ export async function stripeWebhook(app: FastifyInstance) {
       try {
         done(null, body)
       } catch (error) {
-        // @ts-expect-error - error.statusCode is not defined
         error.statusCode = 400
-        // @ts-expect-error - error.statusCode is not defined
         done(error, undefined)
       }
     },
@@ -100,34 +96,8 @@ export async function stripeWebhook(app: FastifyInstance) {
                   },
                 })
 
-                const code = uuid().slice(0, 6)
-                await prisma.authLinks.create({
-                  data: {
-                    code,
-                    userId: user.id,
-                  },
-                })
-
-                const authLink = new URL(
-                  '/auth/link/authenticate',
-                  env.NEXT_PUBLIC_API_URL,
-                )
-                authLink.searchParams.set('code', code)
-                authLink.searchParams.set('redirect', env.AUTH_REDIRECT_URL)
-
-                logger.info(
-                  `Auth link generated for user ${user.email}: ${authLink}`,
-                )
-
-                const { error } = await resend.emails.send({
-                  from: 'Inscribe <dontreply@tryinscribe.app>',
-                  to: user.email,
-                  subject: '[Inscribe] Magic link authentication',
-                  react: AuthenticationMagicLinkTemplate({
-                    userEmail: user.email,
-                    authLink: authLink.toString(),
-                  }),
-                })
+                const authService = makeAuthService()
+                await authService.createMagicLink(user.email)
               }
 
               const isInTrial = subscriptionType === Subscription.HOBBY

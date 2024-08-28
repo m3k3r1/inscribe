@@ -1,3 +1,4 @@
+import fastifyCookie, { type FastifyCookieOptions } from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
@@ -15,57 +16,78 @@ import {
 import pino from 'pino'
 import { ZodError } from 'zod'
 
+import { makeDatasetService } from '@/services/factories/make-dataset-service'
+
 import { UnauthorizedError } from './_errors/unauthorized-error'
-import { authenticateFromLink } from './routes/authenticate-from-link'
-import { getUserProfile } from './routes/get-user-profile'
-import { sendMagicLink } from './routes/send-magic-link'
-import { stripeWebhook } from './routes/stripe-webhook'
+import { authController } from './controllers/auth-controller'
+import { datasetController } from './controllers/dataset-controller'
+import { feedbackController } from './controllers/feedback-controller'
+import { inviteController } from './controllers/invite-controller'
+import { memberController } from './controllers/member-controller'
+import { organizationController } from './controllers/organization-controller'
+import { projectController } from './controllers/projects-controller'
+import { usageController } from './controllers/usage-controller'
+import { userController } from './controllers/user-controller'
+import { webhookController } from './controllers/webhook-controller'
 
 export const logger = pino({ name: 'Inscribe' })
 
-const app = fastify().withTypeProvider<ZodTypeProvider>()
+const app = fastify({ logger }).withTypeProvider<ZodTypeProvider>()
+
+app.register(fastifyCookie, {
+  secret: 'ai-sass',
+  parseOptions: {},
+} as FastifyCookieOptions)
+
+if (env.NODE_ENV !== 'production') {
+  app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: 'Inscribe AI SaaS',
+        description: 'AI SaaS with multi-tenant & RBAC.',
+        version: '1.0.0',
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+      servers: [],
+    },
+    transform: jsonSchemaTransform,
+  })
+
+  app.register(fastifySwaggerUI, {
+    routePrefix: '/docs',
+  })
+}
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
-app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: 'Next.js SaaS',
-      description: 'Full-stack SaaS with multi-tenant & RBAC.',
-      version: '1.0.0',
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
-  },
-  transform: jsonSchemaTransform,
-})
-
-app.register(fastifySwaggerUI, {
-  routePrefix: '/docs',
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
 })
 
 app.register(fastifyNats, {
   natsOptions: { servers: env.NATS_SERVER_URL },
 })
 
-app.register(fastifyJwt, {
-  secret: env.JWT_SECRET,
-})
-
 app.register(fastifyCors)
-
-app.register(getUserProfile)
-app.register(sendMagicLink)
-app.register(authenticateFromLink)
-app.register(stripeWebhook)
+app.register(authController)
+app.register(userController)
+app.register(organizationController)
+app.register(projectController)
+app.register(memberController)
+app.register(inviteController)
+app.register(datasetController)
+app.register(webhookController)
+app.register(usageController)
+app.register(feedbackController)
 
 app.setErrorHandler((error, request, reply) => {
   if (error instanceof ZodError) {
@@ -83,9 +105,7 @@ app.setErrorHandler((error, request, reply) => {
   }
 })
 
-app.listen({ host: '0.0.0.0', port: env.SERVER_PORT }).then(() => {
-  logger.info(`Server is running on port ${env.SERVER_PORT}🚀`)
-})
+app.listen({ host: '0.0.0.0', port: env.SERVER_PORT }).then(() => {})
 
 app.ready().then(async () => {
   const sub = app.nc.subscribe(env.NATS_YOUTUBE_TOPIC, {})
@@ -93,7 +113,7 @@ app.ready().then(async () => {
     const decoded = app.NATS.JSONCodec().decode(m.data)
     logger.info(`[YOUTUBE:WORKER]: '${JSON.stringify(decoded)}'`)
 
-    // const datasetService = makeDatasetService()
-    // await datasetService.transcribeYoutubeVideo(decoded.id, decoded.uri)
+    const datasetService = makeDatasetService()
+    await datasetService.transcribeYoutubeVideo(decoded.id, decoded.uri)
   }
 })

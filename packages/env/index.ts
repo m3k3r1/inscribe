@@ -9,6 +9,7 @@ export const env = createEnv({
     DATABASE_URL: z.string(),
     JWT_SECRET: z.string(),
     LANGCHAIN_PROJECT: z.string(),
+    LANGCHAIN_CALLBACKS_BACKGROUND: z.coerce.boolean().default(true),
     LANGCHAIN_TRACING_V2: z.coerce.boolean().default(true),
     LANGCHAIN_API_KEY: z.string(),
     OPENAI_API_KEY: z.string(),
@@ -32,6 +33,7 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET,
+    LANGCHAIN_CALLBACKS_BACKGROUND: process.env.LANGCHAIN_CALLBACKS_BACKGROUND,
     SERVER_PORT: process.env.SERVER_PORT,
     NODE_ENV: process.env.NODE_ENV,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
