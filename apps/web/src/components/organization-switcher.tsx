@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import { ChevronsUpDown, Loader2, PlusCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { useOnborda } from 'onborda'
+import { useEffect, useState } from 'react'
 
 import { getOrganizations } from '@/http/get-organizations'
 
@@ -20,6 +22,8 @@ import {
 import { Skeleton } from './ui/skeleton'
 
 export function OrganizationSwitcher() {
+  const [isOpen, setIsOpen] = useState(false)
+  const { currentStep, setCurrentStep } = useOnborda()
   const { slug: currentOrg } = useParams<{
     slug: string
   }>()
@@ -32,8 +36,15 @@ export function OrganizationSwitcher() {
   const currentOrganization =
     data && data.organizations.find((org) => org.slug === currentOrg)
 
+  useEffect(() => {
+    console.log('currentStep', currentStep)
+    if (currentStep === 1) {
+      setIsOpen(true)
+    }
+  }, [currentStep])
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger className="flex w-[168px] items-center gap-2 rounded p-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary">
         {isLoading ? (
           <>
@@ -70,6 +81,7 @@ export function OrganizationSwitcher() {
         alignOffset={-16}
         sideOffset={12}
         className="w-[200px]"
+        id="onborda-step2"
       >
         <DropdownMenuGroup>
           <DropdownMenuLabel>Organizations</DropdownMenuLabel>
@@ -92,7 +104,10 @@ export function OrganizationSwitcher() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/create-organization">
+          <Link
+            href="/create-organization"
+            onClick={() => setTimeout(() => setCurrentStep(2), 550)}
+          >
             <PlusCircle className="mr-2 size-4" />
             Create new
           </Link>

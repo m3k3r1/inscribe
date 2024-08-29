@@ -1,6 +1,8 @@
+import { Prisma } from '@prisma/client'
 import { organizationSchema, roleSchema } from '@saas/auth'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { uuid } from 'uuidv4'
 import { z } from 'zod'
 
 import { prisma } from '@/lib/prisma'
@@ -25,51 +27,79 @@ export async function organizationController(app: FastifyInstance) {
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
-            domain: z.string().nullish(),
             shouldAttachUsersByDomain: z.boolean().optional().default(false),
           }),
           response: {
             201: z.object({
               organizationId: z.string().uuid(),
             }),
+            500: z.object({
+              message: z.string(),
+            }),
           },
         },
       },
       async (request, reply) => {
         const userId = await request.getCurrentUserId()
-        const { name, domain, shouldAttachUsersByDomain } = request.body
+        const { name, shouldAttachUsersByDomain } = request.body
 
-        if (domain) {
-          const organizationByDomain = await prisma.organization.findUnique({
-            where: { domain },
-          })
+        // if (domain) {
+        //   const organizationByDomain = await prisma.organization.findUnique({
+        //     where: { domain },
+        //   })
 
-          if (organizationByDomain) {
-            throw new BadRequestError(
-              'Organization with this domain already exists',
-            )
-          }
-        }
+        //   if (organizationByDomain) {
+        //     throw new BadRequestError(
+        //       'Organization with this domain already exists',
+        //     )
+        //   }
+        // }
 
-        const organization = await prisma.organization.create({
-          data: {
-            name,
-            slug: createSlug(name),
-            domain,
-            shouldAttachUsersByDomain,
-            ownerId: userId,
-            members: {
-              create: {
-                userId,
-                role: 'ADMIN',
+        try {
+          const organization = await prisma.organization.create({
+            data: {
+              name,
+              slug: createSlug(name),
+              shouldAttachUsersByDomain,
+              ownerId: userId,
+              members: {
+                create: {
+                  userId,
+                  role: 'ADMIN',
+                },
               },
             },
-          },
-        })
+          })
 
-        return reply.status(201).send({
-          organizationId: organization.id,
-        })
+          return reply.status(201).send({
+            organizationId: organization.id,
+          })
+        } catch (error) {
+          if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            const organization = await prisma.organization.create({
+              data: {
+                name,
+                slug: `${createSlug(name)}-${uuid().slice(0, 6)}`,
+                shouldAttachUsersByDomain,
+                ownerId: userId,
+                members: {
+                  create: {
+                    userId,
+                    role: 'ADMIN',
+                  },
+                },
+              },
+            })
+
+            return reply.status(201).send({
+              organizationId: organization.id,
+            })
+          }
+
+          return reply.status(500).send({
+            message: 'Internal server error',
+          })
+        }
       },
     )
   app
