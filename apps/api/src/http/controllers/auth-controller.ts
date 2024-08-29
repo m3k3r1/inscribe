@@ -124,13 +124,22 @@ export async function authController(app: FastifyInstance) {
           },
           { sign: { expiresIn: '7d' } },
         )
-        const cookie = serialize('token', token, {
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7,
-          // secure: true,
-          // sameSite: 'none',
-          // domain: 'tryinscribe.app',
-        })
+
+        let cookie
+        if (process.env.NODE_ENV === 'production') {
+          cookie = serialize('token', token, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7,
+            secure: true,
+            sameSite: 'none',
+            domain: 'tryinscribe.app',
+          })
+        } else {
+          cookie = serialize('token', token, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7,
+          })
+        }
 
         reply.header('Set-Cookie', cookie)
 
