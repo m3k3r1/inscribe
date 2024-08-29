@@ -39,32 +39,32 @@ app.register(fastifyCookie, {
   parseOptions: {},
 } as FastifyCookieOptions)
 
-if (env.NODE_ENV !== 'production') {
-  app.register(fastifySwagger, {
-    openapi: {
-      info: {
-        title: 'Inscribe AI SaaS',
-        description: 'AI SaaS with multi-tenant & RBAC.',
-        version: '1.0.0',
-      },
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
-          },
+// if (env.NODE_ENV !== 'production') {
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Inscribe AI SaaS',
+      description: 'AI SaaS with multi-tenant & RBAC.',
+      version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
         },
       },
-      servers: [],
     },
-    transform: jsonSchemaTransform,
-  })
+    servers: [],
+  },
+  transform: jsonSchemaTransform,
+})
 
-  app.register(fastifySwaggerUI, {
-    routePrefix: '/docs',
-  })
-}
+app.register(fastifySwaggerUI, {
+  routePrefix: '/docs',
+})
+// }
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
