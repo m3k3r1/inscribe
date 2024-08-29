@@ -14,8 +14,11 @@ export async function Header() {
   const permissions = await ability()
 
   return (
-    <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-      <div className="flex items-center gap-3 ">
+    <div
+      id="onborda-step1"
+      className="mx-auto flex max-w-[1200px] items-center justify-between"
+    >
+      <div className="flex items-center gap-3">
         <FileVideo2 className="h-5 w-5" />
         <Slash className="size-3 -rotate-[24deg] text-border" />
         <OrganizationSwitcher />

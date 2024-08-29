@@ -6,7 +6,7 @@ import { OrganizationForm } from '../../create-organization/organiztion-form'
 export default function CreateOrganization() {
   return (
     <Sheet defaultOpen>
-      <InterceptedSheetContent id="onborda-step3">
+      <InterceptedSheetContent id="onborda-step2">
         <SheetHeader>
           <SheetTitle>Create organization</SheetTitle>
         </SheetHeader>

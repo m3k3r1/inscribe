@@ -62,8 +62,10 @@ export async function createOrganizationAction(data: FormData) {
 
   const { name } = result.data
 
+  let organizationId
+
   try {
-    await createOrganization({
+    organizationId = await createOrganization({
       name,
     })
 
@@ -86,6 +88,7 @@ export async function createOrganizationAction(data: FormData) {
 
   return {
     success: true,
+    payload: organizationId,
     message: 'Successfully saved the organization.',
     errors: null,
   }

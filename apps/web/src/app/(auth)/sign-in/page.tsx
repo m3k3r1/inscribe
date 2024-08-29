@@ -7,7 +7,7 @@ export default function SignInPage() {
   return (
     <div className="p-8">
       <Button variant="ghost" asChild className="absolute right-8 top-8">
-        <Link href="landing">No account yet? Sign Up</Link>
+        <Link href="/#landing">No account yet? Sign Up</Link>
       </Button>
       <div className="flex w-[350px] flex-col justify-center gap-6">
         <div className="flex flex-col gap-2 text-center">

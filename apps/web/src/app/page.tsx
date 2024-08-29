@@ -1,3 +1,6 @@
+import { redirect } from 'next/navigation'
+
+import { isAuthenticated } from '@/auth/auth'
 import CallToActionSection from '@/components/landing/cta-section'
 import HeroSection from '@/components/landing/hero-section'
 import PricingSection from '@/components/landing/pricing-section'
@@ -6,6 +9,10 @@ import Particles from '@/components/magicui/particles'
 import { SphereMask } from '@/components/magicui/sphere-mask'
 
 export default async function Home() {
+  if (isAuthenticated()) {
+    redirect('/home')
+  }
+
   return (
     <>
       {/* <SiteBanner /> */}

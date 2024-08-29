@@ -18,7 +18,6 @@ export const env = createEnv({
     STRIPE_SECRET_KEY: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     AUTH_REDIRECT_URL: z.string(),
-    STRIPE_CUSTOMER_PORTAL_URL: z.string(),
     PROXY_CONFIG_1: z.string(),
     PROXY_CONFIG_2: z.string(),
     PROXY_CONFIG_3: z.string(),
@@ -26,9 +25,9 @@ export const env = createEnv({
     PROXY_CONFIG_5: z.string(),
     PROXY_AUTH: z.string(),
   },
-  client: {},
-  shared: {
+  client: {
     NEXT_PUBLIC_API_URL: z.string().url(),
+    NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: z.string().url(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -47,7 +46,7 @@ export const env = createEnv({
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     AUTH_REDIRECT_URL: process.env.AUTH_REDIRECT_URL,
-    STRIPE_CUSTOMER_PORTAL_URL: process.env.STRIPE_CUSTOMER_PORTAL_URL,
+    NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL,
     PROXY_CONFIG_1: process.env.PROXY_CONFIG_1,
     PROXY_CONFIG_2: process.env.PROXY_CONFIG_2,
     PROXY_CONFIG_3: process.env.PROXY_CONFIG_3,
@@ -56,4 +55,5 @@ export const env = createEnv({
     PROXY_AUTH: process.env.PROXY_AUTH,
   },
   emptyStringAsUndefined: true,
+  skipValidation: true,
 });

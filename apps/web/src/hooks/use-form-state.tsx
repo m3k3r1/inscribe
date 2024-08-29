@@ -4,6 +4,7 @@ interface FormState {
   success: boolean
   message: string | null
   errors: Record<string, string[]> | null
+  payload?: string
 }
 
 export function useFormState(
@@ -14,7 +15,12 @@ export function useFormState(
   const [isPending, startTransition] = useTransition()
 
   const [formState, setFormState] = useState(
-    initialState ?? { success: false, message: null, errors: null },
+    initialState ?? {
+      success: false,
+      message: null,
+      errors: null,
+      payload: null,
+    },
   )
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
