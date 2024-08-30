@@ -1,6 +1,18 @@
 import {createEnv} from '@t3-oss/env-nextjs';
 import {z}  from 'zod'
 
+export const uiEnv = createEnv({
+  client: {
+    NEXT_PUBLIC_API_URL: z.string().url(),
+    NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: z.string().url(),
+  },
+  runtimeEnv: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL,
+  },
+  emptyStringAsUndefined: true,
+})
+
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'production']).default('development'),
@@ -25,10 +37,6 @@ export const env = createEnv({
     PROXY_CONFIG_5: z.string(),
     PROXY_AUTH: z.string(),
   },
-  shared: {
-    NEXT_PUBLIC_API_URL: z.string().url(),
-    NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: z.string().url(),
-  },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET,
@@ -36,7 +44,6 @@ export const env = createEnv({
     SERVER_PORT: process.env.SERVER_PORT,
     NODE_ENV: process.env.NODE_ENV,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     LANGCHAIN_PROJECT: process.env.LANGCHAIN_PROJECT,
     LANGCHAIN_TRACING_V2: process.env.LANGCHAIN_TRACING_V2,
     LANGCHAIN_API_KEY: process.env.LANGCHAIN_API_KEY,
@@ -46,7 +53,6 @@ export const env = createEnv({
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     AUTH_REDIRECT_URL: process.env.AUTH_REDIRECT_URL,
-    NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL,
     PROXY_CONFIG_1: process.env.PROXY_CONFIG_1,
     PROXY_CONFIG_2: process.env.PROXY_CONFIG_2,
     PROXY_CONFIG_3: process.env.PROXY_CONFIG_3,
@@ -55,5 +61,5 @@ export const env = createEnv({
     PROXY_AUTH: process.env.PROXY_AUTH,
   },
   emptyStringAsUndefined: true,
-  // skipValidation: true,
+  skipValidation: true,
 });

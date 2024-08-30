@@ -1,6 +1,8 @@
 ARG NODE_VERSION
 ARG PORT
 ARG PROJECT
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL
 
 # Alpine image
 FROM node:${NODE_VERSION}-alpine AS alpine
@@ -24,6 +26,8 @@ RUN turbo prune --scope=${PROJECT} --docker
 # Build the project
 FROM base AS builder
 ARG PROJECT
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL
 
 WORKDIR /app
 
@@ -39,8 +43,8 @@ RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm install --frozen-lockfi
 COPY --from=pruner /app/out/full/ .
 
 WORKDIR /app/apps/${PROJECT}
-RUN echo "NEXT_PUBLIC_API_URL=${API_URL}" > .env.production 
-RUN echo "NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL=${STRIPE_CUSTOMER_PORTAL_URL}" >> .env.production
+RUN echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" > .env.production 
+RUN echo "NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL=${NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL}" >> .env.production
 
 RUN pnpm build
 # RUN turbo build --filter=${PROJECT} --env-mode=loose

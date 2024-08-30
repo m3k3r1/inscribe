@@ -8,10 +8,12 @@ services:
         - NODE_VERSION=22.1.0
         - PROJECT=web
         - PORT=3000
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL=${NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL}
     ports:
       - "3000:3000"
-    # env_file:
-    #   - .env.prod
+    env_file:
+      - .env.prod
   api:
     container_name: inscribe-api
     build:
@@ -23,8 +25,8 @@ services:
         - PORT=3333
     ports:
       - "3333:3333"
-    # env_file:
-    #   - .env.prod
+    env_file:
+      - .env.prod
   nats-server:
     image: nats:latest
     container_name: inscribe-nats-server
