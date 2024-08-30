@@ -5,7 +5,10 @@ import { useParams } from 'next/navigation'
 import { useState } from 'react'
 
 import { Editor } from '@/components/editor/editor'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Switch } from '@/components/ui/switch'
 import { useAiFilters } from '@/hooks/use-ai-filters'
 import { getContent } from '@/http/get-content'
 import { getDatasets } from '@/http/get-datasets'
@@ -76,6 +79,10 @@ export default function Projects() {
 
   const [charsCount, setCharsCount] = useState(0)
   const [saveStatus, setSaveStatus] = useState('Saved')
+  const [search, setSearch] = useState('')
+  const [liveSearch, setLiveSearch] = useState(false)
+
+  const [currentContent, setCurrentContent] = useState<string>('')
 
   const { data: datasetsData } = useQuery({
     queryKey: [orgSlug, 'datasets'],
@@ -144,10 +151,31 @@ export default function Projects() {
           setCharsCount={setCharsCount}
           setSaveStatus={setSaveStatus}
           content={projectContent?.content}
+          onContentChange={setCurrentContent}
         />
-        <ScrollArea className="h-[80vh] w-1/3">
-          <DraggableDatasetBlock datasetFilter={datasetFilter} />
-        </ScrollArea>
+        <div className="flex w-1/3 flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Input
+              className="flex-1"
+              disabled={liveSearch}
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="flex flex-col items-center gap-1">
+              <Label className="text-xs">Live Search</Label>
+              <Switch checked={liveSearch} onCheckedChange={setLiveSearch} />
+            </div>
+          </div>
+          <ScrollArea className="h-[80vh] ">
+            <DraggableDatasetBlock
+              datasetFilter={datasetFilter}
+              search={search}
+              liveSearch={liveSearch}
+              projectContent={currentContent as string}
+            />
+          </ScrollArea>
+        </div>
       </div>
     </div>
   )

@@ -6,6 +6,8 @@ interface GetProfileResponse {
     name: string | null
     email: string
     avatarUrl: string | null
+    subscription: string | null
+    tokenLimit: number
   }
 }
 

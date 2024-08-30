@@ -30,8 +30,14 @@ function onDragStart(
 
 export function DraggableDatasetBlock({
   datasetFilter,
+  search,
+  liveSearch,
+  projectContent,
 }: {
   datasetFilter: Set<SelectType>
+  search: string
+  liveSearch: boolean
+  projectContent: string
 }) {
   const { slug: orgSlug } = useParams<{
     slug: string
@@ -58,13 +64,35 @@ export function DraggableDatasetBlock({
   })
 
   const blocks =
-    blocksData?.map((block) => ({
-      name: block.label,
-      datasetId: block.datasetId,
-      blockId: block.id,
-      content: block.content,
-      createdAt: block.createdAt,
-    })) || []
+    blocksData
+      ?.filter((block) => {
+        if (liveSearch && projectContent) {
+          const searchTerms = projectContent
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean)
+
+          return searchTerms.every(
+            (term) =>
+              block.content.toLowerCase().includes(term) ||
+              block.label.toLowerCase().includes(term),
+          )
+        } else {
+          const searchTerms = search.toLowerCase().split(/\s+/).filter(Boolean)
+          return searchTerms.every(
+            (term) =>
+              block.content.toLowerCase().includes(term) ||
+              block.label.toLowerCase().includes(term),
+          )
+        }
+      })
+      .map((block) => ({
+        name: block.label,
+        datasetId: block.datasetId,
+        blockId: block.id,
+        content: block.content,
+        createdAt: block.createdAt,
+      })) || []
 
   function mapDatasetIdToName(datasetId: string) {
     const dataset = Array.from(datasetFilter).find(

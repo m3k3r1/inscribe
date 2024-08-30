@@ -55,6 +55,8 @@ export async function userController(app: FastifyInstance) {
                 name: z.string().nullable(),
                 email: z.string().email(),
                 avatarUrl: z.string().url().nullable(),
+                subscription: z.string().nullable(),
+                tokenLimit: z.number().nullable(),
               }),
             }),
           },
@@ -65,7 +67,37 @@ export async function userController(app: FastifyInstance) {
           const userId = await request.getCurrentUserId()
           const userService = makeUserService()
           const user = await userService.get(userId)
-          return reply.send({ user })
+
+          switch (user.subscription) {
+            case 'HOBBY':
+              return reply.send({
+                user: {
+                  ...user,
+                  tokenLimit: 300000,
+                },
+              })
+            case 'CREATOR':
+              return reply.send({
+                user: {
+                  ...user,
+                  tokenLimit: 3000000,
+                },
+              })
+            case 'ULTRA':
+              return reply.send({
+                user: {
+                  ...user,
+                  tokenLimit: 1000000,
+                },
+              })
+            default:
+              return reply.send({
+                user: {
+                  ...user,
+                  tokenLimit: 0,
+                },
+              })
+          }
         } catch (error) {
           if (error instanceof UserDoesNotExistsError) {
             throw new BadRequestError(error.message)

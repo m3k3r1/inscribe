@@ -4,12 +4,14 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { UsageChart } from '@/components/usage-chart'
+import { getProfile } from '@/http/get-profile'
 import { getUsage } from '@/http/get-usage'
 
 dayjs.extend(relativeTime)
 
 export async function BillingList() {
   const usage = await getUsage()
+  const { user } = await getProfile()
 
   const usageByProject = usage.usage.reduce(
     (acc, curr) => {
@@ -43,9 +45,12 @@ export async function BillingList() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
-        <Progress className="flex-1" value={(absoluteToken / 100000) * 100} />
+        <Progress
+          className="flex-1"
+          value={(absoluteToken / user.tokenLimit) * 100}
+        />
         <span className="text-right text-sm text-muted-foreground">
-          {absoluteToken.toLocaleString()} / 100,000
+          {absoluteToken.toLocaleString()} / {user.tokenLimit}
         </span>
       </div>
       <div className="grid grid-cols-3 gap-4">

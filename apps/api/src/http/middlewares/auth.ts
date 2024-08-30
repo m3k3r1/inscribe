@@ -32,6 +32,11 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         },
         include: {
           organization: true,
+          user: {
+            select: {
+              subscription: true,
+            },
+          },
         },
       })
 

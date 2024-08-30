@@ -8,7 +8,10 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/org')) {
     const [, , slug] = pathname.split('/')
 
-    response.cookies.set('org', slug)
+    response.cookies.set('org', slug, {
+      secure: true,
+      domain: 'tryinscribe.app',
+    })
   } else {
     response.cookies.delete('org')
   }

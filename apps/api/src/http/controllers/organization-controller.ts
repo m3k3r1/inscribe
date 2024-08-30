@@ -193,6 +193,7 @@ export async function organizationController(app: FastifyInstance) {
                 role: roleSchema,
                 userId: z.string().uuid(),
                 organizationId: z.string().uuid(),
+                subscription: z.string().nullable(),
               }),
             }),
           },
@@ -208,6 +209,7 @@ export async function organizationController(app: FastifyInstance) {
             role: membership.role,
             userId: membership.userId,
             organizationId: membership.organizationId,
+            subscription: membership.user.subscription,
           },
         }
       },

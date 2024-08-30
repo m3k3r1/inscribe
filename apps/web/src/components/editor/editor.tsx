@@ -55,9 +55,15 @@ interface EditorProps {
   setCharsCount: (count: number) => void
   setSaveStatus: (status: string) => void
   content?: string
+  onContentChange: (content: string) => void
 }
 
-export function Editor({ setCharsCount, setSaveStatus, content }: EditorProps) {
+export function Editor({
+  setCharsCount,
+  setSaveStatus,
+  content,
+  onContentChange,
+}: EditorProps) {
   const [initialContent, setInitialContent] = useState<null | JSONContent>(null)
 
   const [openNode, setOpenNode] = useState(false)
@@ -93,6 +99,7 @@ export function Editor({ setCharsCount, setSaveStatus, content }: EditorProps) {
         editor.storage.markdown.getMarkdown(),
       )
       setSaveStatus('Saved')
+      onContentChange(editor.storage.markdown.getMarkdown())
       try {
         await saveContent(orgSlug, projectSlug, { content })
       } catch (e) {
