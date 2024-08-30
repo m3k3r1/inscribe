@@ -27,6 +27,8 @@ services:
       - "3333:3333"
     env_file:
       - .env.prod
+    depends_on:
+      - nats-server
   nats-server:
     image: nats:latest
     container_name: inscribe-nats-server
