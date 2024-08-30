@@ -40,7 +40,7 @@ export class AuthService {
       userId: userFromEmail.id,
     })
 
-    const authLink = new URL('/auth/link/authenticate', env.NEXT_PUBLIC_API_URL)
+    const authLink = new URL('/auth/link/authenticate', env.API_URL)
     authLink.searchParams.set('code', code)
     authLink.searchParams.set('redirect', env.AUTH_REDIRECT_URL)
 
