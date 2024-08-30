@@ -18,6 +18,7 @@ ARG PROJECT
 
 WORKDIR /app
 COPY . .
+
 RUN turbo prune --scope=${PROJECT} --docker
 
 # Build the project
@@ -37,7 +38,12 @@ RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm install --frozen-lockfi
 # Copy source code of isolated subworkspace
 COPY --from=pruner /app/out/full/ .
 
-RUN turbo build --filter=${PROJECT} --env-mode=loose
+WORKDIR /app/apps/${PROJECT}
+RUN echo "NEXT_PUBLIC_API_URL=${API_URL}" > .env.production 
+RUN echo "NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL=${STRIPE_CUSTOMER_PORTAL_URL}" >> .env.production
+
+RUN pnpm build
+# RUN turbo build --filter=${PROJECT} --env-mode=loose
 RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
 RUN rm -rf ./**/*/src
 

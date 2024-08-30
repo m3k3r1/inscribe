@@ -1,4 +1,4 @@
-import { env } from '@saas/env'
+import { uiEnv as env } from '@saas/env'
 import { Info } from 'lucide-react'
 import Link from 'next/link'
 
