@@ -25,7 +25,7 @@ export const env = createEnv({
     PROXY_CONFIG_5: z.string(),
     PROXY_AUTH: z.string(),
   },
-  client: {
+  shared: {
     NEXT_PUBLIC_API_URL: z.string().url(),
     NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: z.string().url(),
   },
@@ -55,5 +55,5 @@ export const env = createEnv({
     PROXY_AUTH: process.env.PROXY_AUTH,
   },
   emptyStringAsUndefined: true,
-  skipValidation: true,
+  // skipValidation: true,
 });
