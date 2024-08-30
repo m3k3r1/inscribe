@@ -80,14 +80,14 @@ export async function userController(app: FastifyInstance) {
               return reply.send({
                 user: {
                   ...user,
-                  tokenLimit: 3000000,
+                  tokenLimit: 6000000,
                 },
               })
             case 'ULTRA':
               return reply.send({
                 user: {
                   ...user,
-                  tokenLimit: 1000000,
+                  tokenLimit: 2000000,
                 },
               })
             default:

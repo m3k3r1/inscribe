@@ -31,7 +31,7 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
     project: string
   }>()
   const [inputValue, setInputValue] = useState('')
-  const { modelFilter, languageFilter } = useAiFilters()
+  const { modelFilter, languageFilter, formatFilter } = useAiFilters()
 
   const { completion, complete, isLoading } = useCompletion({
     // id: "novel",
@@ -64,6 +64,7 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
           model: modelFilter.values().next().value,
           language: languageFilter.values().next().value,
           project: projectSlug,
+          format: formatFilter,
         },
       })
     }
@@ -125,6 +126,7 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
                         command: inputValue,
                         model: modelFilter.values().next().value,
                         language: languageFilter.values().next().value,
+                        format: formatFilter.values().next().value,
                       },
                     }).then(() => setInputValue(''))
 
@@ -140,6 +142,7 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
                       command: inputValue,
                       model: modelFilter.values().next().value,
                       language: languageFilter.values().next().value,
+                      format: formatFilter.values().next().value,
                     },
                   }).then(() => setInputValue(''))
                 }}
@@ -170,6 +173,7 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
                       context,
                       model: modelFilter.values().next().value,
                       language: languageFilter.values().next().value,
+                      format: formatFilter.values().next().value,
                     },
                   })
                 }}

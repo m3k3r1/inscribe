@@ -88,8 +88,14 @@ export async function usageController(app: FastifyInstance) {
                       id: z.string(),
                       name: z.string(),
                       slug: z.string(),
+                      organization: z.object({
+                        id: z.string(),
+                        name: z.string(),
+                        slug: z.string(),
+                      }),
                     })
                     .nullish(),
+
                   totalTokens: z.number(),
                   createdAt: z.date(),
                 }),
@@ -114,6 +120,13 @@ export async function usageController(app: FastifyInstance) {
                 name: true,
                 slug: true,
                 id: true,
+                organization: {
+                  select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                  },
+                },
               },
             },
           },

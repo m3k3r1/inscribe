@@ -48,8 +48,10 @@ export async function POST(req: Request): Promise<Response> {
   //   }
   // }
 
-  const { prompt, option, command, context, model, language, project } =
+  const { prompt, option, command, context, model, language, project, format } =
     await req.json()
+
+  const textFormat = format.value
 
   const llm = match(model.value)
     .with('gpt-4o', () => {
@@ -72,32 +74,39 @@ export async function POST(req: Request): Promise<Response> {
         role: 'system',
         content:
           'You are an AI writing assistant that continues existing text based on context from prior text. ' +
+          `You are writting a ${textFormat}` +
           'Give more weight/priority to the later characters than the beginning ones. ' +
           'Limit your response to no more than 200 characters, but make sure to construct complete sentences.' +
           'Use Markdown formatting when appropriate.',
       },
       {
         role: 'user',
-        content: `${prompt} .Use the language: ${language.value}`,
+        content: `
+        ${prompt}
+        
+        Use the language: ${language.value}
+        Output only the result of your task
+        `,
       },
     ])
     .with('improve', () => [
       {
         role: 'system',
-        content:
-          'You are an AI writing assistant that improves existing text. ' +
-          'Limit your response to no more than 200 characters, but make sure to construct complete sentences.' +
-          'Use Markdown formatting when appropriate.' +
-          'Return only the result of your task.' +
-          `Use the language: ${language.value}`,
+        content: systemGhostWritterPrompt(textFormat),
       },
       {
         role: 'user',
         content: `
-        The existing text is: 
+        Improve the given text: 
         "${prompt}"
-        Be aware of the optional context:  
-        "${context}"    
+
+        Limit your response to no more than 200 characters, but make sure to construct complete sentences.
+        Be aware of the optional context, use it only for coesion:  
+        "${context}"
+
+        Use the language: ${language.value}
+        
+        Output only the result of your task
         `,
       },
     ])
@@ -106,17 +115,17 @@ export async function POST(req: Request): Promise<Response> {
         role: 'system',
         content:
           'You are an AI writing assistant that shortens existing text. ' +
-          'Use Markdown formatting when appropriate.' +
-          'Return only the result of your task.' +
-          `Use the language: ${language.value}`,
+          `You are writting a ${textFormat}` +
+          'Use Markdown formatting when appropriate.',
       },
       {
         role: 'user',
         content: `
         The existing text is: 
         "${prompt}"
-        Be aware of the optional context:  
-        "${context}"    
+           
+        Use the language: ${language.value}
+        Output only the result of your task
         `,
       },
     ])
@@ -125,13 +134,15 @@ export async function POST(req: Request): Promise<Response> {
         role: 'system',
         content:
           'You are an AI writing assistant that lengthens existing text. ' +
-          'Use Markdown formatting when appropriate.' +
-          'Return only the result of your task.',
+          `You are writting a ${textFormat}` +
+          'Use Markdown formatting when appropriate.',
       },
       {
         role: 'user',
-        content: `The existing text is: ${prompt}
-                Use the language: ${language.value}
+        content: `
+        The existing text is: ${prompt}
+        Use the language: ${language.value}
+        Return only the result of your task.
         `,
       },
     ])
@@ -140,14 +151,17 @@ export async function POST(req: Request): Promise<Response> {
         role: 'system',
         content:
           'You are an AI writing assistant that fixes grammar and spelling errors in existing text. ' +
+          `You are writting a ${textFormat}` +
           'Limit your response to no more than 200 characters, but make sure to construct complete sentences.' +
-          'Use Markdown formatting when appropriate.' +
-          'Return only the result of your task.',
+          'Use Markdown formatting when appropriate.',
       },
       {
         role: 'user',
-        content: `The existing text is: ${prompt}
-                Use the language: ${language.value}`,
+        content: `
+        The existing text is: ${prompt}
+        Use the language: ${language.value}
+        Return only the result of your task.
+        `,
       },
     ])
     .with('zap', () => [
@@ -155,6 +169,7 @@ export async function POST(req: Request): Promise<Response> {
         role: 'system',
         content:
           'You area an AI writing assistant that generates text based on a prompt. ' +
+          `You are writting a ${textFormat}` +
           'You take an input from the user and a command for manipulating the text' +
           'Use Markdown formatting when appropriate.',
       },
@@ -163,19 +178,19 @@ export async function POST(req: Request): Promise<Response> {
         content: `
         For this text: ${prompt}. 
         You have to respect the command: ${command}   
-        Be aware of the optional context: 
-          
+
+        Be aware of the optional context:  
         "${context}"    
 
         You should ignore any '[dataset-block-<ID>]' tag that might appear
-
-          Use the language: ${language.value}`,
+        Use the language: ${language.value}
+        Return only the result of your task.`,
       },
     ])
     .with('command', () => [
       {
         role: 'system',
-        content: systemGhostWritterPrompt,
+        content: systemGhostWritterPrompt(textFormat),
       },
       {
         role: 'user',
@@ -189,13 +204,15 @@ export async function POST(req: Request): Promise<Response> {
           Return only the result of your task.
 
           Use the language: ${language.value}
+          Return only the result of your task.
+
         `,
       },
     ])
     .with('magic', () => [
       {
         role: 'system',
-        content: systemGhostWritterPrompt,
+        content: systemGhostWritterPrompt(textFormat),
       },
       {
         role: 'user',
@@ -210,7 +227,7 @@ export async function POST(req: Request): Promise<Response> {
           And be a full interesting article
           The blocks dont need to be in order, you can reorder them as you see fit, and can also be used more than once.
           
-          Use the users language: ${language}
+          Use the language: ${language.value}
           `,
       },
       {
@@ -228,7 +245,9 @@ export async function POST(req: Request): Promise<Response> {
           Use Markdown formatting when appropriate.,
           You should ignore any '[dataset-block-<ID>]' tag that might appear
 
-          Use the users language: ${language}
+          Use the language: ${language.value}
+          Return only the result of your task.,
+
         `,
         // You should keep the markdown tag where you took the information to generate a given sentence.
         // should be placed in the beginning of the sentence.

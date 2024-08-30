@@ -1,7 +1,7 @@
 'use client'
 
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -13,11 +13,13 @@ import { useFormState } from '@/hooks/use-form-state'
 import { singInAction } from './actions'
 
 export function SignInForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()
 
   const [{ errors, message, success }, handleSubmit, isPending] = useFormState(
     singInAction,
     () => {
+      router.push('/sign-in/code')
       toast.success('We sent a authentication link to your email')
     },
   )

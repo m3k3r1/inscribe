@@ -6,6 +6,11 @@ interface GetUsageResponse {
       id: string
       name: string
       slug: string
+      organization: {
+        id: string
+        name: string
+        slug: string
+      }
     }
     totalTokens: number
     createdAt: string
