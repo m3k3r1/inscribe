@@ -4,8 +4,8 @@ import {
   Container,
   Head,
   Heading,
-  Hr,
   Html,
+  Link,
   Preview,
   Section,
   Tailwind,
@@ -13,44 +13,44 @@ import {
 } from '@react-email/components'
 
 interface AuthenticationMagicLinkTemplateProps {
-  userEmail: string
-  authLink: string
+  authCode: string
 }
 
 export function AuthenticationMagicLinkTemplate({
-  userEmail,
-  authLink,
+  authCode,
 }: AuthenticationMagicLinkTemplateProps) {
-  const previewText = `Login to Inscribe`
+  const previewText = `Sign in to Inscribe`
 
   return (
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
       <Tailwind>
-        <Body className="mx-auto my-auto bg-white font-sans">
-          <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
-            <Section className="mt-[32px] text-center">
-              <span className="text-2xl"></span>
-            </Section>
-            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
-              Your magic link
-            </Heading>
-            <Text className="text-[14px] leading-[24px] text-black">
-              You requested this login for Inscribe with {userEmail}.
+        <Body className="bg-white text-center font-sans">
+          <Container className="mx-auto my-[20px] w-[480px] max-w-full rounded border border-solid border-[#ddd] p-[12%_6%]">
+            <Text className="text-center text-[18px] font-bold">Inscribe</Text>
+            <Heading className="text-center">Your authentication code</Heading>
+            <Text className="text-center">
+              Enter it in your open browser window or press the sign in button.
+              This code will expire in 15 minutes.
             </Text>
-            <Section className="mb-[32px] mt-[32px] text-center">
-              <Button
-                className="rounded bg-[#102C24] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
-                href={authLink}
-              >
-                Click here to log in
-              </Button>
+            <Section className="my-[16px_auto_14px] w-[280px] max-w-full rounded bg-[rgba(0,0,0,.05)] align-middle">
+              <Heading className="m-[0_auto] inline-block w-full py-[8px] text-center tracking-[8px]">
+                {authCode}
+              </Heading>
             </Section>
-
-            <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
-            <Text className="text-[12px] leading-[24px] text-[#666666]">
-              If you didn't request this, please ignore this email.
+            <Text className="m-0 p-[0_40px] text-center tracking-normal text-[#444]">
+              Not expecting this email?
+            </Text>
+            <Text className="m-0 p-[0_40px] text-center tracking-normal text-[#444]">
+              Contact{' '}
+              <Link
+                className="text-[#444] underline"
+                href="mailto:support@inscribe.com"
+              >
+                support@tryinscribe.app
+              </Link>{' '}
+              if you did not request this code.
             </Text>
           </Container>
         </Body>

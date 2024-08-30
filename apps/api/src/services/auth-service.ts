@@ -51,8 +51,7 @@ export class AuthService {
       to: userFromEmail.email,
       subject: '[Inscribe] Magic link authentication',
       react: AuthenticationMagicLinkTemplate({
-        userEmail: userFromEmail.email,
-        authLink: authLink.toString(),
+        authCode: code,
       }),
     })
 

@@ -8,12 +8,9 @@ import { shutdownOrganization } from '@/http/shutdown-organization'
 export function ShutdownOrganizationButton() {
   async function shutdownOrganizationAction() {
     'use server'
-
     const currentOrg = getCurrentOrg()
-
     await shutdownOrganization({ org: currentOrg! })
-
-    redirect('/')
+    redirect('/home')
   }
 
   return (

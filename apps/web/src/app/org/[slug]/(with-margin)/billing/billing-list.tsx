@@ -19,6 +19,8 @@ export async function BillingList() {
         acc[curr.project.id] = {
           ...curr.project,
           totalTokens: 0,
+          orgName: curr.project.organization.name,
+          orgSlug: curr.project.organization.slug,
           createdAt: curr.createdAt,
         }
       }
@@ -31,6 +33,8 @@ export async function BillingList() {
         id: string
         name: string
         slug: string
+        orgName: string
+        orgSlug: string
         totalTokens: number
         createdAt: string
       }
@@ -58,10 +62,10 @@ export async function BillingList() {
           <Card key={project.id} className="flex flex-col justify-between">
             <CardHeader>
               <CardTitle className="text-xl font-medium">
-                {project.name}
+                {project.orgName}/{project.name}
               </CardTitle>
             </CardHeader>
-            <UsageChart project={project} maxTokens={100000} />
+            <UsageChart project={project} maxTokens={user.tokenLimit} />
             <CardFooter className="flex items-center justify-end gap-1.5">
               <span className="truncate text-xs text-muted-foreground">
                 edited {dayjs(project.createdAt).fromNow()}
