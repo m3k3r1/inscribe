@@ -44,13 +44,13 @@ services:
       -m 8222  
     volumes:
       - nats_data:/nats_data  
-  # jaeger-all-in-one:
-  #   image: jaegertracing/all-in-one:latest
-  #   restart: always
-  #   ports:
-  #     - "16686:16686"
-  #     - "14268"
-  #     - "14250"
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    restart: always
+    ports:
+      - "16686:16686"
+      - "14268"
+      - "14250"
 
   # otel-collector:
   #   image: otel/opentelemetry-collector:0.67.0
