@@ -219,7 +219,9 @@ export default function Projects() {
         </div>
       </div>
 
-      {absoluteToken >= (profile?.user?.tokenLimit ?? 0) && <MaxLimitDialog />}
+      {absoluteToken &&
+        absoluteToken !== 0 &&
+        absoluteToken >= (profile?.user?.tokenLimit ?? 0) && <MaxLimitDialog />}
     </div>
   )
 }
