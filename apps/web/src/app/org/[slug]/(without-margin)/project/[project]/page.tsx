@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { useState } from 'react'
 
 import { Editor } from '@/components/editor/editor'
+import { MaxLimitDialog } from '@/components/max-limit-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -12,6 +13,8 @@ import { Switch } from '@/components/ui/switch'
 import { useAiFilters } from '@/hooks/use-ai-filters'
 import { getContent } from '@/http/get-content'
 import { getDatasets } from '@/http/get-datasets'
+import { getProfile } from '@/http/get-profile'
+import { getUsage } from '@/http/get-usage'
 
 import { DraggableDatasetBlock } from './draggable-dataset-block'
 import { EditorFilterSelector } from './editor-filter-selector'
@@ -116,6 +119,24 @@ export default function Projects() {
     enabled: !!orgSlug && !!projectSlug,
   })
 
+  const { data: usage } = useQuery({
+    queryKey: ['usage'],
+    queryFn: () => getUsage(),
+  })
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => getProfile(),
+  })
+
+  const absoluteToken =
+    (usage &&
+      usage.usage.reduce((acc, curr) => {
+        acc += curr.totalTokens
+        return acc
+      }, 0)) ||
+    0
+
   const datasets =
     datasetsData?.datasets.map((dataset) => ({
       value: dataset.id,
@@ -187,7 +208,7 @@ export default function Projects() {
               <Switch checked={liveSearch} onCheckedChange={setLiveSearch} />
             </div>
           </div>
-          <ScrollArea className="h-[80vh] ">
+          <ScrollArea className="h-[75vh] ">
             <DraggableDatasetBlock
               datasetFilter={datasetFilter}
               search={search}
@@ -197,6 +218,8 @@ export default function Projects() {
           </ScrollArea>
         </div>
       </div>
+
+      {absoluteToken >= (profile?.user?.tokenLimit ?? 0) && <MaxLimitDialog />}
     </div>
   )
 }
