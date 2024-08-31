@@ -1,3 +1,7 @@
+configs:
+  otel-collector-config:
+    file: ./otel-collector-config.yaml
+
 services:
   web:
     container_name: inscribe-web
@@ -51,6 +55,7 @@ services:
       - "16686:16686"
       - "14268"
       - "14250"
+
   zipkin-all-in-one:
     image: openzipkin/zipkin:latest
     restart: always
@@ -62,8 +67,9 @@ services:
     image: otel/opentelemetry-collector:0.67.0
     restart: always
     command: ["--config=/etc/otel-collector-config.yaml"]
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    configs:
+      - source: otel-collector-config
+        target: /etc/otel-collector-config.yaml
     ports:
       - "1888:1888"   # pprof extension
       - "8888:8888"   # Prometheus metrics exposed by the collector
