@@ -1,9 +1,8 @@
+import { uiEnv } from '@saas/env'
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const redirectUrl = new URL(request.nextUrl.clone())
-  redirectUrl.pathname = '/'
+export async function GET() {
   cookies().delete('token')
-  return NextResponse.redirect(redirectUrl)
+  return NextResponse.redirect(uiEnv.NEXT_PUBLIC_APP_URL)
 }
