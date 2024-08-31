@@ -6,6 +6,8 @@ import Stripe from 'stripe'
 import { z } from 'zod'
 
 import { prisma } from '@/lib/prisma'
+import { resend } from '@/lib/resend'
+import { WelcomeEmailTemplate } from '@/mail/templates/welcome'
 import { makeAuthService } from '@/services/factories/make-auth-service'
 
 import { logger } from '../server'
@@ -94,6 +96,15 @@ export async function webhookController(app: FastifyInstance) {
                     email,
                     name,
                   },
+                })
+
+                await resend.emails.send({
+                  from: 'Inscribe <dontreply@tryinscribe.app>',
+                  to: user.email,
+                  subject: '[Inscribe] Welcome to Inscribe',
+                  react: WelcomeEmailTemplate({
+                    userName: user.name,
+                  }),
                 })
 
                 const authService = makeAuthService()
