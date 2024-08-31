@@ -33,6 +33,74 @@ export class OpenAILlmProvider {
     return this.srtToTranscriptions(transcription, uri, datasetId)
   }
 
+  async createFileInsights(rawDataset: RawDataset[]): Promise<LlmInsight[]> {
+    const insights: LlmInsight[] = []
+
+    const chunkSize = 100
+    for (let i = 0; i < rawDataset.length; i += chunkSize) {
+      const chunk = rawDataset.slice(i, i + chunkSize)
+      const jsonData = JSON.stringify(chunk, null, 2)
+
+      const parser = StructuredOutputParser.fromZodSchema(
+        z.array(
+          z.object({
+            content: z
+              .string()
+              .describe(
+                'Provides a well-rounded, synthesized block of information derived from the original file.',
+              ),
+            label: z
+              .string()
+              .describe(
+                'Specifies the nature of the block, such as "overview," "quote," "insight." or what you think is best',
+              ),
+            context: z
+              .string()
+              .describe('Describes the purpose or focus of the block.'),
+            datasetId: z
+              .string()
+              .describe('Dataset ID do not invent use the provided dataset ID'),
+            id: z.string().describe('use the provided id do not invent'),
+          }),
+        ),
+      )
+
+      const chain = RunnableSequence.from([
+        PromptTemplate.fromTemplate(
+          `You are an expert in extracting actionable insights from files. When provided with a file,
+          your task is to create substantial and self-contained blocks of information that synthesize content from
+          different parts of the file. 
+          
+          Dont write in the 3rd person. Write the plain facts and observations. Dont use 'the speaker' or 'the user'
+           use the name of the person if possible, if not ignore it.
+          
+          Each block should be detailed enough to stand on its own, and should
+          include the following keys:{format_instructions}\n{file}
+          `,
+        ),
+        new ChatOpenAI({ model: 'gpt-4o', temperature: 0 }),
+        parser,
+      ])
+
+      const response = await chain.invoke({
+        file: jsonData,
+        format_instructions: parser.getFormatInstructions(),
+      })
+
+      for (const insight of response) {
+        insights.push({
+          content: insight.content,
+          type: insight.label,
+          context: insight.context,
+          datasetId: insight.datasetId,
+          rawDatasetId: insight.id,
+        })
+      }
+    }
+
+    return insights
+  }
+
   async createInsights(rawDataset: RawDataset[]): Promise<LlmInsight[]> {
     const insights: LlmInsight[] = []
 

@@ -1,3 +1,4 @@
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DatasetStatus, type Prisma } from '@prisma/client'
 import fs from 'fs'
 
@@ -27,6 +28,38 @@ export class DatasetService {
 
   async getDatasetBlocks(datasetId: string) {
     return this.blockRepository.findByDatasetId(datasetId)
+  }
+
+  async parseTxtFile() {}
+
+  async parsePDF(filename: string, file: Buffer, organizationId: string) {
+    const blob = new Blob([file], { type: 'application/pdf' })
+
+    const loader = new PDFLoader(blob)
+    const docs = await loader.load()
+
+    const dataset = await this.datasetRepository.createDataset({
+      name: filename,
+      type: 'PDF',
+      uri: `file://${filename}`,
+      organizationId,
+    })
+
+    docs.map(async (t) => {
+      t.pageContent.split('\n').map(async (c) => {
+        await this.rawDatasetRepository.create({
+          content: c,
+          metadata: { ...t.metadata },
+          dataset: {
+            connect: {
+              id: dataset.id,
+            },
+          },
+        })
+      })
+    })
+
+    return dataset
   }
 
   async getDatasetsByOrganizationId(organizationId: string) {
@@ -89,6 +122,46 @@ export class DatasetService {
     if (fs.existsSync(filename)) {
       fs.unlinkSync(filename)
     }
+  }
+
+  async createFileBlocks(datasetId: string) {
+    const dataset = await this.datasetRepository.findById(datasetId)
+    if (!dataset) {
+      return
+    }
+
+    await this.datasetRepository.update(datasetId, {
+      status: DatasetStatus.PROCESSING,
+    })
+
+    const rawDataset = await this.getRawDatasetByDatasetId(dataset.id)
+    const insights = await this.llmProvider.createFileInsights(rawDataset)
+
+    insights.map(async (i) => {
+      await this.blockRepository.create({
+        content: i.content,
+        label: i.type,
+        dataset: {
+          connect: {
+            id: datasetId,
+          },
+        },
+        rawDataset: {
+          connect: {
+            id: i.rawDatasetId,
+          },
+        },
+        organization: {
+          connect: {
+            id: dataset?.organizationId,
+          },
+        },
+      })
+    })
+
+    await this.datasetRepository.update(datasetId, {
+      status: DatasetStatus.READY,
+    })
   }
 
   async createBlocks(datasetId: string) {

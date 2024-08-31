@@ -60,6 +60,66 @@ export async function datasetController(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
+    .post(
+      '/organization/:slug/dataset/file',
+      {
+        schema: {
+          tags: ['Dataset'],
+          summary: 'Create a new txt or pdf dataset',
+          security: [{ bearerAuth: [] }],
+          params: z.object({
+            slug: z.string(),
+          }),
+          consumes: ['multipart/form-data'],
+          response: {
+            201: z.object({
+              datasetId: z.string(),
+              status: z.string(),
+            }),
+            400: z.object({
+              message: z.string(),
+            }),
+          },
+        },
+      },
+      async (request, reply) => {
+        const { slug } = request.params
+        const data = await request.file()
+        const { organization } = await request.getUserMembership(slug)
+
+        if (
+          data.mimetype !== 'application/pdf' &&
+          data.mimetype !== 'text/plain'
+        ) {
+          return reply.status(400).send({
+            message: `Unsupported Media Type: ${data.mimetype}`,
+          })
+        }
+
+        const fileBuffer = await data.toBuffer()
+        const datasetService = makeDatasetService()
+        const dataset = await datasetService.parsePDF(
+          data.filename,
+          fileBuffer,
+          organization.id,
+        )
+
+        app.nc.publish(
+          env.NATS_FILE_TOPIC,
+          app.NATS.JSONCodec().encode({
+            id: dataset.id,
+          }),
+        )
+
+        reply
+          .status(201)
+          .send({ datasetId: dataset.id, status: dataset.status })
+      },
+    )
+
+  app
+    .withTypeProvider<ZodTypeProvider>()
+    .register(auth)
     .get(
       '/organization/:slug/dataset',
       {
@@ -98,6 +158,10 @@ export async function datasetController(app: FastifyInstance) {
         const datasets = await datasetService.getDatasetsByOrganizationId(
           organization.id,
         )
+
+        if (!datasets) {
+          return reply.status(200).send({ datasets: [] })
+        }
 
         reply.status(200).send({ datasets })
       },

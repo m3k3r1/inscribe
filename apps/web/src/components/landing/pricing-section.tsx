@@ -21,9 +21,9 @@ const demoPrices = [
     name: 'Hobbyist',
     description: 'A basic plan for individual users',
     features: [
-      '10 data sources',
+      '10 data sources per month',
       '300000 characters per month',
-      'Access to OpenAI GPT4o',
+      'Access to OpenAI GPT4o-mini',
     ],
     isMostPopular: false,
     monthly: {
@@ -42,7 +42,7 @@ const demoPrices = [
     name: 'Creator',
     description: 'A premium plan for growing businesses',
     features: [
-      'Unlimited data sources',
+      '50 data sources per month',
       '600000 characters per month',
       'Access to OpenAI GPT4o',
     ],
@@ -284,14 +284,13 @@ export default function PricingSection() {
                 Custom
               </span>
             </motion.div>
-            <Link href="">
+            <Link href="https://x.com/m3k3r1">
               <Button
                 className={cn(
                   'group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter',
                   'transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2',
                 )}
                 disabled={false}
-                onClick={() => console.log('Subscribe to Enterprise Plan')}
               >
                 <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 transform-gpu bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-96 dark:bg-black" />
                 <p>Contact</p>

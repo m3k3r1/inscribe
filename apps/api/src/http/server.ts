@@ -1,6 +1,7 @@
 import fastifyCookie, { type FastifyCookieOptions } from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
+import fastifyMultipart from '@fastify/multipart'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 import { env } from '@saas/env'
@@ -39,33 +40,38 @@ app.register(fastifyCookie, {
   parseOptions: {},
 } as FastifyCookieOptions)
 
-// if (env.NODE_ENV !== 'production') {
-app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: 'Inscribe AI SaaS',
-      description: 'AI SaaS with multi-tenant & RBAC.',
-      version: '1.0.0',
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+if (env.NODE_ENV !== 'production') {
+  app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: 'Inscribe AI SaaS',
+        description: 'AI SaaS with multi-tenant & RBAC.',
+        version: '1.0.0',
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
         },
       },
+      servers: [],
     },
-    servers: [],
+    transform: jsonSchemaTransform,
+  })
+
+  app.register(fastifySwaggerUI, {
+    routePrefix: '/docs',
+  })
+}
+
+app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 1024 * 1024 * 10, // 10 MB
   },
-  transform: jsonSchemaTransform,
 })
-
-app.register(fastifySwaggerUI, {
-  routePrefix: '/docs',
-})
-// }
-
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
@@ -115,5 +121,16 @@ app.ready().then(async () => {
 
     const datasetService = makeDatasetService()
     await datasetService.transcribeYoutubeVideo(decoded.id, decoded.uri)
+  }
+})
+
+app.ready().then(async () => {
+  const sub = app.nc.subscribe(env.NATS_FILE_TOPIC, {})
+  for await (const m of sub) {
+    const decoded = app.NATS.JSONCodec().decode(m.data)
+    logger.info(`[FILE:WORKER]: '${JSON.stringify(decoded)}'`)
+
+    const datasetService = makeDatasetService()
+    await datasetService.createFileBlocks(decoded.id)
   }
 })
