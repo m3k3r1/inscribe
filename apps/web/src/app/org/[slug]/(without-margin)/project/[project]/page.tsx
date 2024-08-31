@@ -45,18 +45,38 @@ const formats = [
     label: 'Blog',
   },
   {
-    value: 'script',
+    value: 'video-script',
     label: 'Video Script',
+  },
+  {
+    value: 'email',
+    label: 'Email',
+  },
+  {
+    value: 'newsletter',
+    label: 'Newsletter',
   },
 ]
 
 const languages = [
   {
-    value: 'pt-PT',
+    value: 'Portuguese from portugal',
     label: 'Portuguese',
   },
   {
-    value: 'en',
+    value: 'german',
+    label: 'German',
+  },
+  {
+    value: 'french',
+    label: 'French',
+  },
+  {
+    value: 'spanish',
+    label: 'Spanish',
+  },
+  {
+    value: 'english',
     label: 'English',
   },
 ]

@@ -9,7 +9,11 @@ import { match } from 'ts-pattern'
 import { getCurrentOrg } from '@/auth/auth'
 import { updateTokenUsage } from '@/http/update_token_count'
 
-import { systemGhostWritterPrompt } from './prompts'
+import {
+  plannerAgentPrompt,
+  systemGhostWritterPrompt,
+  translatorAgentPrompt,
+} from './prompts'
 
 // Create an OpenAI API client (that's edge friendly!)
 
@@ -209,51 +213,256 @@ export async function POST(req: Request): Promise<Response> {
         `,
       },
     ])
-    .with('magic', () => [
-      {
-        role: 'system',
-        content: systemGhostWritterPrompt(textFormat),
-      },
-      {
-        role: 'user',
-        content: `
-          Categorize this list of blocks into sections to write an amazing article about this:
-          
-          ${context}
+    .with('magic', () =>
+      match(textFormat)
+        .with('article', () => [
+          {
+            role: 'system',
+            content: plannerAgentPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            The client wants to write a ${textFormat}
 
-          Use this blocks to create the sections of the article.
-          Each section must create a strong connection with the topic and the other sections.           
-          Use a section title/separation only when it makes sense.
-          And be a full interesting article
-          The blocks dont need to be in order, you can reorder them as you see fit, and can also be used more than once.
-          
-          Use the language: ${language.value}
-          `,
-      },
-      {
-        role: 'user',
-        content: `
-          Write the article organized in the sections created in the previous step, you can only write the sections 
-          you are given. 
-         
-          With the information of the blocks and the blocks only
-          ""${context}""
-        
-          The text must flow naturally and be easy to read with a catchy flow and a hook title. 
-          Must have connection with the topic and in between sections.
-          Use a section title only when it makes sense.
-          Use Markdown formatting when appropriate.,
-          You should ignore any '[dataset-block-<ID>]' tag that might appear
+            using the following context:
+            ${context}
+            `,
+          },
+          {
+            role: 'system',
+            content: systemGhostWritterPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            act upon the previous plan and write the ${textFormat}
 
-          Use the language: ${language.value}
-          Return only the result of your task.,
+            using only the following context:
+            ${context}
 
-        `,
-        // You should keep the markdown tag where you took the information to generate a given sentence.
-        // should be placed in the beginning of the sentence.
-        // like this: [dataset-block-1] <content>
-      },
-    ])
+            output only the ${textFormat}
+            `,
+          },
+          {
+            role: 'system',
+            content: translatorAgentPrompt(textFormat, language.value),
+          },
+          {
+            role: 'user',
+            content: `
+            translate the previous ${textFormat} to ${language.value}:
+            output only the translated result
+            `,
+          },
+        ])
+        .with('blog', () => [
+          {
+            role: 'system',
+            content: plannerAgentPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            The client wants to write a ${textFormat}
+
+            using the following context:
+            ${context}
+            `,
+          },
+          {
+            role: 'system',
+            content: systemGhostWritterPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            act upon the previous plan and write the ${textFormat}
+
+            using only the following context:
+            ${context}
+
+            output only the ${textFormat}
+            `,
+          },
+          {
+            role: 'system',
+            content: translatorAgentPrompt(textFormat, language.value),
+          },
+          {
+            role: 'user',
+            content: `
+            translate the previous ${textFormat} to ${language.value}:
+            output only the translated result
+            `,
+          },
+        ])
+        .with('tweet', () => [
+          {
+            role: 'system',
+            content: plannerAgentPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            The client wants to write a ${textFormat}
+
+            using the following context:
+            ${context}
+            `,
+          },
+          {
+            role: 'system',
+            content: systemGhostWritterPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            act upon the previous plan and write the ${textFormat}
+
+            using only the following context:
+            ${context}
+
+            output only the ${textFormat}
+            `,
+          },
+          {
+            role: 'system',
+            content: translatorAgentPrompt(textFormat, language.value),
+          },
+          {
+            role: 'user',
+            content: `
+            translate the previous ${textFormat} to ${language.value}:
+            output only the translated result
+            `,
+          },
+        ])
+        .with('email', () => [
+          {
+            role: 'system',
+            content: plannerAgentPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            The client wants to write a ${textFormat}
+
+            using the following context:
+            ${context}
+            `,
+          },
+          {
+            role: 'system',
+            content: systemGhostWritterPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            act upon the previous plan and write the ${textFormat}
+
+            using only the following context:
+            ${context}
+
+            output only the ${textFormat}
+            `,
+          },
+          {
+            role: 'system',
+            content: translatorAgentPrompt(textFormat, language.value),
+          },
+          {
+            role: 'user',
+            content: `
+            translate the previous ${textFormat} to ${language.value}:
+            output only the translated result
+            `,
+          },
+        ])
+        .with('newsletter', () => [
+          {
+            role: 'system',
+            content: plannerAgentPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            The client wants to write a ${textFormat}
+
+            using the following context:
+            ${context}
+            `,
+          },
+          {
+            role: 'system',
+            content: systemGhostWritterPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            act upon the previous plan and write the ${textFormat}
+
+            using only the following context:
+            ${context}
+
+            output only the ${textFormat}
+            `,
+          },
+          {
+            role: 'system',
+            content: translatorAgentPrompt(textFormat, language.value),
+          },
+          {
+            role: 'user',
+            content: `
+            translate the previous ${textFormat} to ${language.value}:
+            output only the translated result
+            `,
+          },
+        ])
+        .with('video-script', () => [
+          {
+            role: 'system',
+            content: plannerAgentPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            The client wants to write a ${textFormat}
+
+            using the following context:
+            ${context}
+            `,
+          },
+          {
+            role: 'system',
+            content: systemGhostWritterPrompt(textFormat),
+          },
+          {
+            role: 'user',
+            content: `
+            act upon the previous plan and write the ${textFormat}
+
+            using only the following context:
+            ${context}
+
+            output only the ${textFormat}
+            `,
+          },
+          {
+            role: 'system',
+            content: translatorAgentPrompt(textFormat, language.value),
+          },
+          {
+            role: 'user',
+            content: `
+            translate the previous ${textFormat} to ${language.value}:
+            output only the translated result
+            `,
+          },
+        ])
+        .run(),
+    )
     .run() as CoreMessage[]
 
   const stream = await streamText({

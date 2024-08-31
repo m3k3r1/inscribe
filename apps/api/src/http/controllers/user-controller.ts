@@ -80,7 +80,7 @@ export async function userController(app: FastifyInstance) {
               return reply.send({
                 user: {
                   ...user,
-                  tokenLimit: 6000000,
+                  tokenLimit: 600000,
                 },
               })
             case 'ULTRA':

@@ -72,7 +72,7 @@ export function DraggableDatasetBlock({
             .split(/\s+/)
             .filter(Boolean)
 
-          return searchTerms.every(
+          return searchTerms.some(
             (term) =>
               block.content.toLowerCase().includes(term) ||
               block.label.toLowerCase().includes(term),
