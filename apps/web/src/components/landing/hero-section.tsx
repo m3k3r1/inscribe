@@ -58,14 +58,14 @@ export default function HeroSection() {
           />
 
           <Image
-            src="/hero-dark.png"
+            src="/inscribe-dark.jpeg"
             alt="Hero Image"
             width={1200}
             height={800}
             className="relative hidden h-full w-full rounded-[inherit] border object-contain dark:block"
           />
           <Image
-            src="/hero-light.png"
+            src="/inscribe-light.jpeg"
             alt="Hero Image"
             width={1200}
             height={800}

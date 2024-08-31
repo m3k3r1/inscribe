@@ -64,7 +64,11 @@ export class OpenAILlmProvider {
       PromptTemplate.fromTemplate(
         `You are an expert in extracting actionable insights from transcripts. When provided with a transcript,
         your task is to create substantial and self-contained blocks of information that synthesize content from
-        different parts of the transcript. Each block should be detailed enough to stand on its own, and should
+        different parts of the transcript. 
+        
+        Dont write in the 3rd person. Write the plain facts and observations.
+        
+        Each block should be detailed enough to stand on its own, and should
         include the following keys:{format_instructions}\n{transcript}
         `,
       ),
