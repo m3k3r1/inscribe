@@ -35,20 +35,22 @@ export default async function RootLayout({
           property="og:image"
           content="https://www.tryinscribe.app/_next/image?url=%2Finscribe-dark.jpeg&w=3840&q=75"
         />
-        <meta name="twitter:card" content="summary_large_image">
-          <meta
-            name="twitter:title"
-            content="Inscribe | AI-Powered Editor to Supercharge Your Productivity"
-          />
-          <meta
-            name="twitter:description"
-            content="Inscribe is an AI-powered copilot designed to enhance productivity and streamline content creation. Turn insights into action and master AI with ease."
-          />
-          <meta
-            name="twitter:image"
-            content="https://www.tryinscribe.app/_next/image?url=%2Finscribe-dark.jpeg&w=3840&q=75"
-          />
-        </meta>
+        <meta
+          name="twitter:card"
+          content="Inscribe | AI-Powered Editor to Supercharge Your Productivity"
+        />
+        <meta
+          name="twitter:title"
+          content="Inscribe | AI-Powered Editor to Supercharge Your Productivity"
+        />
+        <meta
+          name="twitter:description"
+          content="Inscribe is an AI-powered copilot designed to enhance productivity and streamline content creation. Turn insights into action and master AI with ease."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.tryinscribe.app/_next/image?url=%2Finscribe-dark.jpeg&w=3840&q=75"
+        />
         <Providers>
           {children}
           {sheet}
