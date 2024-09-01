@@ -33,7 +33,7 @@ export default async function RootLayout({
         />
         <meta
           property="og:image"
-          content="https://www.tryinscribe.app/_next/image?url=%2Fthumbnail.png"
+          content="https://www.tryinscribe.app/_next/image?url=%2Fthumbnail.png&w=1920&q=50"
         />
         <meta
           name="twitter:card"
@@ -49,7 +49,7 @@ export default async function RootLayout({
         />
         <meta
           name="twitter:image"
-          content="https://www.tryinscribe.app/_next/image?url=%2Fthumbnail.png"
+          content="https://www.tryinscribe.app/_next/image?url=%2Fthumbnail.png&w=1920&q=50"
         />
         <Providers>
           {children}
