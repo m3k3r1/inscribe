@@ -55,7 +55,6 @@ export const DatasetBlockNode = Node.create({
         find: /(.*?)\s*\[dataset-block-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\]\s*/,
         type: this.type,
         getAttributes: (match) => {
-          console.log(match)
           return { blockId: match[2] } // Capture the UUID
         },
       }),

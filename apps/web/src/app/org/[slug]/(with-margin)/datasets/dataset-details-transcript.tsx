@@ -29,9 +29,11 @@ export function DatasetDetailsTranscript({
         <div className="space-y-4 p-4">
           {data?.blocks.map((block) => (
             <div key={block.id} id={block.id}>
-              <h3 className="text-xs text-muted-foreground">
-                {block.metadata.from} - {block.metadata.to}
-              </h3>
+              {block.metadata.from && (
+                <h3 className="text-xs text-muted-foreground">
+                  {block.metadata.from} - {block.metadata.to}
+                </h3>
+              )}
               <p className="">{block.content}</p>
             </div>
           ))}

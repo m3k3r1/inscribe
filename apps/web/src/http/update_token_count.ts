@@ -11,11 +11,9 @@ export async function updateTokenUsage(
   projectSlug: string,
   { totalTokens, promptTokens, completionTokens }: TokenUsageInput,
 ): Promise<void> {
-  const test = await api
+  return await api
     .patch(`organization/${organizationSlug}/project/${projectSlug}/usage`, {
       json: { totalTokens, promptTokens, completionTokens },
     })
     .json()
-
-  console.log(test)
 }

@@ -47,7 +47,6 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
   })
 
   useEffect(() => {
-    console.log('isDirectCommand', isDirectCommand)
     if (isDirectCommand) {
       if (!editor) return
 
