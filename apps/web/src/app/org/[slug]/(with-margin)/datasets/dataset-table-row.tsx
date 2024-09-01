@@ -14,13 +14,14 @@ interface DatasetsTableRowProps {
     id: string
     name: string
     uri: string
+    type: 'YOUTUBE' | 'PDF'
     status: 'PENDING' | 'PROCESSING' | 'READY'
     createdAt: string
   }
 }
 
 export default function DatasetsTableRow({
-  dataset: { id, status, name, uri, createdAt },
+  dataset: { id, status, type, name, uri, createdAt },
 }: DatasetsTableRowProps) {
   return (
     <TableRow>
@@ -32,7 +33,7 @@ export default function DatasetsTableRow({
               <span className="sr-only">Dataset details</span>
             </Button>
           </DialogTrigger>
-          <DatasetDetails id={id} name={name} url={uri} />
+          <DatasetDetails id={id} name={name} type={type} url={uri} />
         </Dialog>
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">{id}</TableCell>

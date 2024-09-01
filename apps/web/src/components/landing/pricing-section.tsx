@@ -65,7 +65,6 @@ const demoPrices = [
     features: [
       'Unlimited data sources',
       '2M characters per month',
-      'Datasets live search',
       'Access to OpenAI GPT4o',
       'Access to Mistral',
       'Access to Claude',
