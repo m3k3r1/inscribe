@@ -58,14 +58,14 @@ export default function HeroSection() {
           />
 
           <Image
-            src="/inscribe-dark.jpeg"
+            src="/inscribe-dark.png"
             alt="Inscribe editor image"
             width={1200}
             height={800}
             className="relative hidden h-full w-full rounded-[inherit] border object-contain dark:block"
           />
           <Image
-            src="/inscribe-light.jpeg"
+            src="/inscribe-light.png"
             alt="Inscribe editor image"
             width={1200}
             height={800}
