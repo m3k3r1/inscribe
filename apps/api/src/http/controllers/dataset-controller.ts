@@ -199,7 +199,6 @@ export async function datasetController(app: FastifyInstance) {
 
         const datasetService = makeDatasetService()
         const blocks = await datasetService.getRawDatasetByDatasetId(datasetId)
-        console.log(blocks)
         reply.status(200).send({ blocks })
       },
     )
