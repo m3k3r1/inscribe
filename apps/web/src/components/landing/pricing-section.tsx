@@ -63,7 +63,7 @@ const demoPrices = [
     name: 'Ultra',
     description: 'A premium plan for growing businesses',
     features: [
-      'Unlimited data sources',
+      '100 data sources',
       '2M characters per month',
       'Access to OpenAI GPT4o',
       'Access to Mistral',

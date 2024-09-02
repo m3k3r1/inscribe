@@ -66,6 +66,7 @@ export async function webhookController(app: FastifyInstance) {
             const name = customer.name
 
             let subscriptionType
+
             switch (priceId) {
               case 'price_1PpTKAHb2yBKjcy0fqk3T2zc':
               case 'price_1PpTJYHb2yBKjcy0nfCoayxd':
@@ -75,8 +76,8 @@ export async function webhookController(app: FastifyInstance) {
               case 'price_1PmHQnHb2yBKjcy0VbYJFuRA':
                 subscriptionType = Subscription.CREATOR
                 break
-              case 'price_1PrN4GHb2yBKjcy0ZvDGngwO':
               case 'price_1PrN3WHb2yBKjcy0zp39LOez':
+              case 'price_1PrNI8Hb2yBKjcy0dCyYp99S':
                 subscriptionType = Subscription.ULTRA
                 break
               default:
