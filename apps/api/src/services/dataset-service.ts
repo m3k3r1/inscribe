@@ -2,6 +2,7 @@ import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DatasetStatus, type Prisma } from '@prisma/client'
 import fs from 'fs'
 
+import { prisma } from '@/lib/prisma'
 import type { LlmProvider } from '@/providers/llm-provider/llm-provider'
 import type { VideoProvider } from '@/providers/video-provider/video-provider'
 import type { BlockRepository } from '@/repositories/block-repository'
@@ -135,7 +136,21 @@ export class DatasetService {
     })
 
     const rawDataset = await this.getRawDatasetByDatasetId(dataset.id)
-    const insights = await this.llmProvider.createFileInsights(rawDataset)
+    const insights = await this.llmProvider.createFileInsights(
+      rawDataset,
+      ({ promptTokens, completionTokens, totalTokens }) => {
+        Promise.resolve().then(async () => {
+          await prisma.datasetUsage.create({
+            data: {
+              datasetId,
+              promptTokens,
+              completionTokens,
+              totalTokens,
+            },
+          })
+        })
+      },
+    )
 
     insights.map(async (i) => {
       await this.blockRepository.create({
@@ -167,7 +182,21 @@ export class DatasetService {
   async createBlocks(datasetId: string) {
     const dataset = await this.datasetRepository.findById(datasetId)
     const rawDataset = await this.getRawDatasetByDatasetId(datasetId)
-    const insights = await this.llmProvider.createInsights(rawDataset)
+    const insights = await this.llmProvider.createInsights(
+      rawDataset,
+      ({ promptTokens, completionTokens, totalTokens }) => {
+        Promise.resolve().then(async () => {
+          await prisma.datasetUsage.create({
+            data: {
+              datasetId,
+              promptTokens,
+              completionTokens,
+              totalTokens,
+            },
+          })
+        })
+      },
+    )
 
     insights.map(async (i) => {
       await this.blockRepository.create({

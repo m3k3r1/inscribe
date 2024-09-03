@@ -69,11 +69,11 @@ export async function usageController(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .get(
-      '/usage',
+      '/usage/project',
       {
         schema: {
           tags: ['Usage'],
-          summary: 'Get user usage',
+          summary: 'Get user project usage',
           security: [{ bearerAuth: [] }],
           response: {
             200: z.object({
@@ -134,6 +134,79 @@ export async function usageController(app: FastifyInstance) {
 
         return reply.status(200).send({
           usage,
+        })
+      },
+    )
+
+  app
+    .withTypeProvider<ZodTypeProvider>()
+    .register(auth)
+    .get(
+      '/usage/dataset',
+      {
+        schema: {
+          tags: ['Usage'],
+          summary: 'Get user dataset usage',
+          security: [{ bearerAuth: [] }],
+          response: {
+            200: z.object({
+              usage: z.array(
+                z.object({
+                  id: z.string(),
+                  datasetId: z.string(),
+                  datasetName: z.string(),
+                  promptTokens: z.number(),
+                  completionTokens: z.number(),
+                  totalTokens: z.number(),
+                  createdAt: z.date(),
+                }),
+              ),
+            }),
+          },
+        },
+      },
+      async (request, reply) => {
+        const userId = await request.getCurrentUserId()
+
+        const datasets = await prisma.datasets.findMany({
+          where: {
+            organization: {
+              ownerId: userId,
+            },
+          },
+          include: {
+            datasetUsages: true,
+          },
+        })
+
+        const result = datasets.flatMap((dataset) => {
+          return dataset.datasetUsages.map(
+            (
+              usage,
+            ): {
+              id: string
+              datasetId: string
+              datasetName: string
+              promptTokens: number
+              completionTokens: number
+              totalTokens: number
+              createdAt: Date
+            } => {
+              return {
+                id: usage.id,
+                datasetId: dataset.id,
+                datasetName: dataset.name,
+                promptTokens: usage.promptTokens,
+                completionTokens: usage.completionTokens,
+                totalTokens: usage.totalTokens,
+                createdAt: dataset.createdAt,
+              }
+            },
+          )
+        })
+
+        return reply.status(200).send({
+          usage: result,
         })
       },
     )

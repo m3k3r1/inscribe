@@ -173,6 +173,7 @@ model Datasets {
   name      String
   type      DatasetType
   uri       String
+  isDeleted Boolean     @default(false) @map("is_deleted")
   createdAt DateTime    @default(now()) @map("created_at")
   updatedAt DateTime    @updatedAt @map("updated_at")
 
@@ -181,10 +182,24 @@ model Datasets {
 
   status DatasetStatus @default(PENDING)
 
-  blocks     Blocks[]
-  rawDataset RawDataset[]
+  blocks        Blocks[]
+  rawDataset    RawDataset[]
+  datasetUsages DatasetUsage[]
 
   @@map("datasets")
+}
+
+model DatasetUsage {
+  id               String   @id @default(uuid())
+  promptTokens     Int      @default(0) @map("prompt_tokens")
+  completionTokens Int      @default(0) @map("completion_tokens")
+  totalTokens      Int      @default(0) @map("total_tokens")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  dataset   Datasets @relation(fields: [datasetId], references: [id])
+  datasetId String   @map("dataset_id")
+
+  @@map("dataset_usages")
 }
 
 model RawDataset {

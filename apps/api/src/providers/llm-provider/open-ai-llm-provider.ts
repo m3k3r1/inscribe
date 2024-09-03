@@ -33,7 +33,15 @@ export class OpenAILlmProvider {
     return this.srtToTranscriptions(transcription, uri, datasetId)
   }
 
-  async createFileInsights(rawDataset: RawDataset[]): Promise<LlmInsight[]> {
+  async createFileInsights(
+    rawDataset: RawDataset[],
+    usageCallback: (usage: {
+      promptTokens: number
+      completionTokens: number
+      totalTokens: number
+    }) => void,
+    model: string = 'gpt-4o',
+  ): Promise<LlmInsight[]> {
     const insights: LlmInsight[] = []
 
     const chunkSize = 100
@@ -78,7 +86,26 @@ export class OpenAILlmProvider {
           include the following keys:{format_instructions}\n{file}
           `,
         ),
-        new ChatOpenAI({ model: 'gpt-4o', temperature: 0 }),
+        new ChatOpenAI({
+          model,
+          temperature: 0,
+          callbacks: [
+            {
+              handleLLMEnd(output) {
+                const totalTokens = output?.llmOutput?.tokenUsage?.totalTokens
+                const promptTokens = output?.llmOutput?.tokenUsage?.promptTokens
+                const completionTokens =
+                  output?.llmOutput?.tokenUsage?.completionTokens
+
+                usageCallback({
+                  promptTokens,
+                  completionTokens,
+                  totalTokens,
+                })
+              },
+            },
+          ],
+        }),
         parser,
       ])
 
@@ -101,7 +128,15 @@ export class OpenAILlmProvider {
     return insights
   }
 
-  async createInsights(rawDataset: RawDataset[]): Promise<LlmInsight[]> {
+  async createInsights(
+    rawDataset: RawDataset[],
+    usageCallback: (usage: {
+      promptTokens: number
+      completionTokens: number
+      totalTokens: number
+    }) => void,
+    model: string = 'gpt-4o',
+  ): Promise<LlmInsight[]> {
     const insights: LlmInsight[] = []
 
     const chunkSize = 100
@@ -146,7 +181,26 @@ export class OpenAILlmProvider {
           include the following keys:{format_instructions}\n{transcript}
           `,
         ),
-        new ChatOpenAI({ model: 'gpt-4o', temperature: 0 }),
+        new ChatOpenAI({
+          model,
+          temperature: 0,
+          callbacks: [
+            {
+              handleLLMEnd(output) {
+                const totalTokens = output?.llmOutput?.tokenUsage?.totalTokens
+                const promptTokens = output?.llmOutput?.tokenUsage?.promptTokens
+                const completionTokens =
+                  output?.llmOutput?.tokenUsage?.completionTokens
+
+                usageCallback({
+                  promptTokens,
+                  completionTokens,
+                  totalTokens,
+                })
+              },
+            },
+          ],
+        }),
         parser,
       ])
 

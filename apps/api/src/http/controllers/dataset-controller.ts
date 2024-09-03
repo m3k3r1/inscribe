@@ -3,6 +3,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
+import { prisma } from '@/lib/prisma'
 import { makeDatasetService } from '@/services/factories/make-dataset-service'
 
 import { auth } from '../middlewares/auth'
@@ -240,6 +241,43 @@ export async function datasetController(app: FastifyInstance) {
           return reply.status(200).send({ blocks: [] })
         }
         reply.status(200).send({ blocks })
+      },
+    )
+
+  app
+    .withTypeProvider<ZodTypeProvider>()
+    .register(auth)
+    .delete(
+      '/organization/:slug/dataset/:datasetId',
+      {
+        schema: {
+          tags: ['Dataset'],
+          summary: 'Delete a dataset',
+          security: [{ bearerAuth: [] }],
+          params: z.object({
+            slug: z.string(),
+            datasetId: z.string(),
+          }),
+          response: {
+            200: z.object({
+              message: z.string(),
+            }),
+          },
+        },
+      },
+      async (request, reply) => {
+        const { datasetId } = request.params
+
+        await prisma.datasets.update({
+          where: {
+            id: datasetId,
+          },
+          data: {
+            isDeleted: true,
+          },
+        })
+
+        reply.status(200).send({ message: 'Dataset deleted' })
       },
     )
 }

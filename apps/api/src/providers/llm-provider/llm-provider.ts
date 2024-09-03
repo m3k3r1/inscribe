@@ -22,6 +22,20 @@ export type LlmInsight = {
 
 export interface LlmProvider {
   transcribeAudio(uri: string, datasetId: string): Promise<LlmTranscription[]>
-  createInsights(rawDataset: RawDataset[]): Promise<LlmInsight[]>
-  createFileInsights(rawDataset: RawDataset[]): Promise<LlmInsight[]>
+  createInsights(
+    rawDataset: RawDataset[],
+    usageCallback: (usage: {
+      promptTokens: number
+      completionTokens: number
+      totalTokens: number
+    }) => void,
+  ): Promise<LlmInsight[]>
+  createFileInsights(
+    rawDataset: RawDataset[],
+    usageCallback: (usage: {
+      promptTokens: number
+      completionTokens: number
+      totalTokens: number
+    }) => void,
+  ): Promise<LlmInsight[]>
 }

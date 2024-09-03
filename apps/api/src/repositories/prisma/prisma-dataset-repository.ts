@@ -26,7 +26,7 @@ export class PrismaDatasetRepository implements DatasetRepository {
 
   findByOrganizationId(organizationId: string): Promise<Datasets[]> {
     return prisma.datasets.findMany({
-      where: { organizationId },
+      where: { organizationId, isDeleted: false },
     })
   }
 
@@ -41,7 +41,7 @@ export class PrismaDatasetRepository implements DatasetRepository {
 
   async findById(id: string): Promise<Datasets | null> {
     return prisma.datasets.findUnique({
-      where: { id },
+      where: { id, isDeleted: false },
     })
   }
 }

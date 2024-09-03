@@ -9,6 +9,9 @@ export class PrismaBlockRepository implements BlockRepository {
     return prisma.blocks.findMany({
       where: {
         datasetId,
+        dataset: {
+          isDeleted: false,
+        },
       },
       // include: {
       //   dataset: {
