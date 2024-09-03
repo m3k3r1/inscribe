@@ -18,6 +18,6 @@ interface GetUsageResponse {
 }
 
 export async function getUsage() {
-  const result = await api.get('usage').json<GetUsageResponse>()
+  const result = await api.get('usage/project').json<GetUsageResponse>()
   return result
 }

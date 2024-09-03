@@ -4,6 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { UsageChart } from '@/components/usage-chart'
+import { getDatasetUsage } from '@/http/get-dataset-usage'
 import { getProfile } from '@/http/get-profile'
 import { getUsage } from '@/http/get-usage'
 
@@ -11,6 +12,7 @@ dayjs.extend(relativeTime)
 
 export async function BillingList() {
   const usage = await getUsage()
+  const datasetUsage = await getDatasetUsage()
   const { user } = await getProfile()
 
   const usageByProject = usage.usage.reduce(
@@ -41,10 +43,17 @@ export async function BillingList() {
     >,
   )
 
-  const absoluteToken = usage.usage.reduce((acc, curr) => {
+  const datasetUsageCalculated = datasetUsage.usage.reduce((acc, curr) => {
     acc += curr.totalTokens
     return acc
   }, 0)
+
+  const projectUsageCalculated = usage.usage.reduce((acc, curr) => {
+    acc += curr.totalTokens
+    return acc
+  }, 0)
+
+  const absoluteToken = projectUsageCalculated + datasetUsageCalculated
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,6 +66,7 @@ export async function BillingList() {
           {absoluteToken.toLocaleString()} / {user.tokenLimit}
         </span>
       </div>
+      <h2 className="text-xl font-medium">Projects</h2>
       <div className="grid grid-cols-3 gap-4">
         {Object.values(usageByProject).map((project) => (
           <Card key={project.id} className="flex flex-col justify-between">
@@ -69,6 +79,31 @@ export async function BillingList() {
             <CardFooter className="flex items-center justify-end gap-1.5">
               <span className="truncate text-xs text-muted-foreground">
                 edited {dayjs(project.createdAt).fromNow()}
+              </span>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      <h2 className="text-xl font-medium">Datasets</h2>
+      <div className="grid grid-cols-3 gap-4">
+        {datasetUsage.usage.map((usage) => (
+          <Card key={usage.id} className="flex flex-col justify-between">
+            <CardHeader>
+              <CardTitle className="text-xl font-medium">
+                {usage.datasetName}
+              </CardTitle>
+            </CardHeader>
+            <UsageChart
+              project={{
+                name: usage.datasetName,
+                totalTokens: usage.totalTokens,
+              }}
+              maxTokens={user.tokenLimit}
+            />
+            <CardFooter className="flex items-center justify-end gap-1.5">
+              <span className="truncate text-xs text-muted-foreground">
+                edited {dayjs(usage.createdAt).fromNow()}
               </span>
             </CardFooter>
           </Card>

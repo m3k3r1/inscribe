@@ -1,11 +1,16 @@
 'use client'
 
+import { useMutation } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { Loader2, Search, Trash } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { TableCell, TableRow } from '@/components/ui/table'
+import { deleteDataset } from '@/http/delete-dataset'
+import { queryClient } from '@/lib/react-query'
 
 import { DatasetDetails } from './dataset-details'
 
@@ -23,6 +28,21 @@ interface DatasetsTableRowProps {
 export default function DatasetsTableRow({
   dataset: { id, status, type, name, uri, createdAt },
 }: DatasetsTableRowProps) {
+  const { slug: orgSlug } = useParams<{ slug: string }>()
+
+  const { mutateAsync } = useMutation({
+    mutationFn: (datasetId: string) => deleteDataset(orgSlug!, datasetId),
+    onSuccess: () => {
+      toast.success('Dataset deleted')
+    },
+    onError: () => {
+      toast.error('Failed to delete dataset')
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [orgSlug, 'datasets'] })
+    },
+  })
+
   return (
     <TableRow>
       <TableCell>
@@ -44,9 +64,7 @@ export default function DatasetsTableRow({
           name
         )}
       </TableCell>
-      <TableCell className="text-muted-foreground">
-        {dayjs(createdAt).fromNow()}
-      </TableCell>
+
       <TableCell>
         {status === 'PENDING' && (
           <div className="flex items-center gap-2">
@@ -69,9 +87,16 @@ export default function DatasetsTableRow({
           </div>
         )}
       </TableCell>
-      <TableCell className="font-medium">Miguel Dias</TableCell>
+      <TableCell className="text-muted-foreground">
+        {dayjs(createdAt).fromNow()}
+      </TableCell>
       <TableCell>
-        <Button variant="outline" className="text-red-400" size="xs">
+        <Button
+          variant="outline"
+          className="text-red-400"
+          size="xs"
+          onClick={() => mutateAsync(id)}
+        >
           <Trash className="mr-2 h-3 w-3" />
           Delete
         </Button>

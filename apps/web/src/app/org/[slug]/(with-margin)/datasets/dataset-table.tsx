@@ -37,9 +37,8 @@ export default function DatasetsTable() {
           <TableHead className="w-[64px]"></TableHead>
           <TableHead className="w-[340px]">ID</TableHead>
           <TableHead className="w-[280px]">Name</TableHead>
-          <TableHead className="w-[180px]">Uploaded at</TableHead>
           <TableHead className="w-[140px]">Status</TableHead>
-          <TableHead className="w-[140px]">User</TableHead>
+          <TableHead className="w-[180px]">Uploaded at</TableHead>
           <TableHead></TableHead>
         </TableRow>
       </TableHeader>

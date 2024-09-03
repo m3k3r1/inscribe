@@ -12,6 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { useAiFilters } from '@/hooks/use-ai-filters'
 import { getContent } from '@/http/get-content'
+import { getDatasetUsage } from '@/http/get-dataset-usage'
 import { getDatasets } from '@/http/get-datasets'
 import { getProfile } from '@/http/get-profile'
 import { getUsage } from '@/http/get-usage'
@@ -124,18 +125,33 @@ export default function Projects() {
     queryFn: () => getUsage(),
   })
 
+  const { data: datasetUsage } = useQuery({
+    queryKey: ['datasetUsage'],
+    queryFn: () => getDatasetUsage(),
+  })
+
   const { data: profile } = useQuery({
     queryKey: ['profile'],
     queryFn: () => getProfile(),
   })
 
-  const absoluteToken =
+  const projectUsageCalculated =
     (usage &&
       usage.usage.reduce((acc, curr) => {
         acc += curr.totalTokens
         return acc
       }, 0)) ||
     0
+
+  const datasetUsageCalculated =
+    (datasetUsage &&
+      datasetUsage.usage.reduce((acc, curr) => {
+        acc += curr.totalTokens
+        return acc
+      }, 0)) ||
+    0
+
+  const absoluteToken = projectUsageCalculated + datasetUsageCalculated
 
   const datasets =
     datasetsData?.datasets.map((dataset) => ({

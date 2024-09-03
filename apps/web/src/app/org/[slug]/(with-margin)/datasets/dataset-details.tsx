@@ -29,8 +29,8 @@ export function DatasetDetails({ id, name, type, url }: DatasetDetailsProps) {
           {type === 'YOUTUBE' ? (
             <YouTubeLazyLoad title={name} url={url} />
           ) : (
-            <div className="flex h-full flex-col items-center justify-center">
-              <File className="min-h-[20vh] w-full" />
+            <div className="flex h-full flex-col items-center justify-center ">
+              <File className="min-h-[20vh] w-full " />
               <span className="text-muted-foreground">{name}</span>
             </div>
           )}
