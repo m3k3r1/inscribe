@@ -24,7 +24,6 @@ const chartConfig = {
 
 interface UsageChartProps {
   project: {
-    id: string
     name: string
     totalTokens: number
   }

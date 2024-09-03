@@ -20,50 +20,42 @@ const demoPrices = [
     id: 'price_1',
     name: 'Hobbyist',
     description: 'A basic plan for individual users',
-    features: [
-      '10 data sources per month',
-      '300000 characters per month',
-      'Access to OpenAI GPT4o-mini',
-    ],
+    features: ['500000 characters per month', 'Access to OpenAI GPT4o-mini'],
     isMostPopular: false,
     monthly: {
       stripeLink: 'https://buy.stripe.com/test_14k7uPgoX3Ng2Qw7sw',
       stripePriceId: 'price_1PpTJYHb2yBKjcy0nfCoayxd',
-      price: 2499,
+      price: 2500,
     },
     yearly: {
       stripeLink: 'https://buy.stripe.com/test_aEU02n1u32Jc4YE7su',
       stripePriceId: 'price_1PpTKAHb2yBKjcy0fqk3T2zc',
-      price: 24999,
+      price: 25000,
     },
   },
   {
     id: 'price_2',
     name: 'Creator',
-    description: 'A premium plan for growing businesses',
-    features: [
-      '50 data sources per month',
-      '600000 characters per month',
-      'Access to OpenAI GPT4o',
-    ],
+    description: 'A premium plan for growing creators',
+    features: ['1M characters per month', 'Access to OpenAI GPT4o'],
     isMostPopular: true,
     monthly: {
       stripeLink: 'https://buy.stripe.com/test_fZe5mH6OnbfI4YE3cc',
       stripePriceId: 'price_1PmHQnHb2yBKjcy0VbYJFuRA',
-      price: 3999,
+      price: 4000,
     },
     yearly: {
       stripeLink: 'https://buy.stripe.com/test_4gw5mH0pZ1F876M145',
       stripePriceId: 'price_1PmHVXHb2yBKjcy0ja534Ydb',
-      price: 39999,
+      price: 40000,
     },
   },
   {
     id: 'price_3',
     name: 'Ultra',
-    description: 'A premium plan for growing businesses',
+    description:
+      'An advanced plan for professionals who require extensive AI capabilities.',
     features: [
-      '100 data sources',
       '2M characters per month',
       'Access to OpenAI GPT4o',
       'Access to Mistral',
@@ -73,12 +65,12 @@ const demoPrices = [
     monthly: {
       stripeLink: 'https://buy.stripe.com/test_bIY8yTfkT0B4dvaaEK',
       stripePriceId: 'price_1PrN4GHb2yBKjcy0ZvDGngwO',
-      price: 5999,
+      price: 6500,
     },
     yearly: {
       stripeLink: 'https://buy.stripe.com/test_8wM6qL1u3gA276M8wD',
       stripePriceId: 'price_1PrNI8Hb2yBKjcy0dCyYp99S',
-      price: 59999,
+      price: 65000,
     },
   },
 ]
