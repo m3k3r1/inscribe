@@ -93,7 +93,7 @@ export default function Projects() {
     languageFilter,
     setLanguageFilter,
   } = useAiFilters()
-  const { slug: orgSlug, project: projectSlug } = useParams<{
+  const { slug: orgSlug } = useParams<{
     slug: string
     project: string
   }>()
@@ -101,9 +101,6 @@ export default function Projects() {
   const [charsCount, setCharsCount] = useState(0)
   const [saveStatus, setSaveStatus] = useState('Saved')
   const [search, setSearch] = useState('')
-  const [liveSearch, setLiveSearch] = useState(false)
-
-  const [currentContent, setCurrentContent] = useState<string>('')
 
   const { data: datasetsData } = useQuery({
     queryKey: [orgSlug, 'datasets'],
@@ -195,16 +192,11 @@ export default function Projects() {
       </div>
 
       <div className="flex h-full gap-2">
-        <Editor
-          setCharsCount={setCharsCount}
-          setSaveStatus={setSaveStatus}
-          onContentChange={setCurrentContent}
-        />
+        <Editor setCharsCount={setCharsCount} setSaveStatus={setSaveStatus} />
         <div className="flex w-1/3 flex-col gap-2">
           <div className="flex items-center gap-2">
             <Input
               className="flex-1"
-              disabled={liveSearch}
               placeholder="Search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -218,7 +210,7 @@ export default function Projects() {
             <DraggableDatasetBlock
               datasetFilter={datasetFilter}
               search={search}
-              liveSearch={liveSearch}
+              liveSearch={false}
               projectContent={''}
             />
           </ScrollArea>

@@ -56,7 +56,7 @@ const extensions = [
 interface EditorProps {
   setCharsCount: (count: number) => void
   setSaveStatus: (status: string) => void
-  onContentChange: (content: string) => void
+  onContentChange?: (content: string) => void
 }
 
 export function Editor({
@@ -105,7 +105,8 @@ export function Editor({
         editor.storage.markdown.getMarkdown(),
       )
       setSaveStatus('Saved')
-      onContentChange(editor.storage.markdown.getMarkdown())
+      if (onContentChange)
+        onContentChange(editor.storage.markdown.getMarkdown())
       try {
         await saveContent(orgSlug, projectSlug, { content })
       } catch (e) {
