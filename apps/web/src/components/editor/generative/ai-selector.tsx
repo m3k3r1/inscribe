@@ -41,8 +41,10 @@ export function AISelector({ onOpenChange, isDirectCommand }: AISelectorProps) {
         toast.error('You have reached your request limit for the day.')
       }
     },
-    onError: (e) => {
-      toast.error(e.message)
+    onError: () => {
+      toast.error(
+        'Ups! Failed to generate content. Make sure you have selected a correct model and template',
+      )
     },
   })
 
