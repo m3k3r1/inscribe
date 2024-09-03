@@ -13,11 +13,11 @@ export default async function Billing() {
         <h1 className="text-2xl font-bold">Billing</h1>
 
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" asChild>
-            <Link href="https://buy.stripe.com/test_3csg1lgoXfvY8aQ9AI">
-              <ShoppingBag className="mr-2 size-4" />
-              Buy tokens
-            </Link>
+          <Button size="sm" variant="outline" disabled>
+            {/* <Link href="https://buy.stripe.com/test_3csg1lgoXfvY8aQ9AI"> */}
+            <ShoppingBag className="mr-2 size-4" />
+            Buy tokens
+            {/* </Link> */}
           </Button>
           <Button size="sm" asChild>
             <Link
