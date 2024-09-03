@@ -73,7 +73,7 @@ export async function userController(app: FastifyInstance) {
               return reply.send({
                 user: {
                   ...user,
-                  tokenLimit: 300000,
+                  tokenLimit: 400000,
                 },
               })
             case 'CREATOR':
@@ -87,7 +87,7 @@ export async function userController(app: FastifyInstance) {
               return reply.send({
                 user: {
                   ...user,
-                  tokenLimit: 2000000,
+                  tokenLimit: 1000000,
                 },
               })
             default:
