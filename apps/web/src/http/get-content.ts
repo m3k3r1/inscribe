@@ -1,8 +1,10 @@
 import { api } from './api-client'
 
 interface GetContentOutput {
-  id: string
-  content: string
+  project: {
+    id: string
+    content: string
+  }
 }
 
 export async function getContent(
@@ -12,6 +14,8 @@ export async function getContent(
   const result = await api
     .get(`organization/${orgSlug}/project/${projectSlug}/content`)
     .json<GetContentOutput>()
+
+  console.log('result', result)
 
   return result
 }

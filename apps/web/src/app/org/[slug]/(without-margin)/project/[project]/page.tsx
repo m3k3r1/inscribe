@@ -114,12 +114,6 @@ export default function Projects() {
     enabled: !!orgSlug,
   })
 
-  const { data: projectContent } = useQuery({
-    queryKey: [orgSlug, 'datasets', 'project', projectSlug],
-    queryFn: () => getContent(orgSlug!, projectSlug!),
-    enabled: !!orgSlug && !!projectSlug,
-  })
-
   const { data: usage } = useQuery({
     queryKey: ['usage'],
     queryFn: () => getUsage(),
@@ -207,7 +201,6 @@ export default function Projects() {
         <Editor
           setCharsCount={setCharsCount}
           setSaveStatus={setSaveStatus}
-          content={projectContent?.content}
           onContentChange={setCurrentContent}
         />
         <div className="flex w-1/3 flex-col gap-2">
@@ -219,17 +212,17 @@ export default function Projects() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <div className="flex flex-col items-center gap-1">
+            {/* <div className="flex flex-col items-center gap-1">
               <Label className="text-xs">Live Search</Label>
               <Switch checked={liveSearch} onCheckedChange={setLiveSearch} />
-            </div>
+            </div> */}
           </div>
           <ScrollArea className="h-[75vh] ">
             <DraggableDatasetBlock
               datasetFilter={datasetFilter}
               search={search}
               liveSearch={liveSearch}
-              projectContent={currentContent as string}
+              projectContent={''}
             />
           </ScrollArea>
         </div>

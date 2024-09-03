@@ -1,5 +1,6 @@
 'use client'
 
+import { useQuery } from '@tanstack/react-query'
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
@@ -20,6 +21,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useDebouncedCallback } from 'use-debounce'
 
+import { getContent } from '@/http/get-content'
 import { saveContent } from '@/http/save-content'
 
 import { Separator } from '../ui/separator'
@@ -54,14 +56,12 @@ const extensions = [
 interface EditorProps {
   setCharsCount: (count: number) => void
   setSaveStatus: (status: string) => void
-  content?: string
   onContentChange: (content: string) => void
 }
 
 export function Editor({
   setCharsCount,
   setSaveStatus,
-  content,
   onContentChange,
 }: EditorProps) {
   const [initialContent, setInitialContent] = useState<null | JSONContent>(null)
@@ -75,6 +75,12 @@ export function Editor({
     slug: string
     project: string
   }>()
+
+  const { data: projectContent } = useQuery({
+    queryKey: [orgSlug, 'datasets', 'project', projectSlug],
+    queryFn: () => getContent(orgSlug!, projectSlug!),
+    enabled: !!orgSlug && !!projectSlug,
+  })
 
   const highlightCodeblocks = (content: string) => {
     const doc = new DOMParser().parseFromString(content, 'text/html')
@@ -111,35 +117,38 @@ export function Editor({
   )
 
   useEffect(() => {
-    const storageContent = window.localStorage.getItem(
-      `novel-content-${projectSlug}`,
-    )
-    if (content) setInitialContent(JSON.parse(content))
-    else if (storageContent) setInitialContent(JSON.parse(storageContent))
-    else
-      setInitialContent({
-        type: 'doc',
-        content: [
-          {
-            type: 'heading',
-            attrs: {
-              level: 1,
-            },
-            content: [
-              {
-                marks: [
-                  {
-                    type: 'bold',
-                  },
-                ],
-                type: 'text',
-                text: projectSlug,
+    if (projectContent) {
+      const storageContent = window.localStorage.getItem(
+        `novel-content-${projectSlug}`,
+      )
+      if (projectContent && projectContent.project.content)
+        setInitialContent(JSON.parse(projectContent.project.content))
+      else if (storageContent) setInitialContent(JSON.parse(storageContent))
+      else
+        setInitialContent({
+          type: 'doc',
+          content: [
+            {
+              type: 'heading',
+              attrs: {
+                level: 1,
               },
-            ],
-          },
-        ],
-      })
-  }, [])
+              content: [
+                {
+                  marks: [
+                    {
+                      type: 'bold',
+                    },
+                  ],
+                  type: 'text',
+                  text: projectSlug,
+                },
+              ],
+            },
+          ],
+        })
+    }
+  }, [projectContent])
 
   if (!initialContent) return null
 
