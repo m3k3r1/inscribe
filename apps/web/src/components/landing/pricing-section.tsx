@@ -20,7 +20,7 @@ const demoPrices = [
     id: 'price_1',
     name: 'Hobbyist',
     description: 'A basic plan for individual users',
-    features: ['500000 characters per month', 'Access to OpenAI GPT4o-mini'],
+    features: ['400000 characters per month', 'Access to OpenAI GPT4o-mini'],
     isMostPopular: false,
     monthly: {
       stripeLink: 'https://buy.stripe.com/test_14k7uPgoX3Ng2Qw7sw',
@@ -37,7 +37,7 @@ const demoPrices = [
     id: 'price_2',
     name: 'Creator',
     description: 'A premium plan for growing creators',
-    features: ['1M characters per month', 'Access to OpenAI GPT4o'],
+    features: ['600000 characters per month', 'Access to OpenAI GPT4o'],
     isMostPopular: true,
     monthly: {
       stripeLink: 'https://buy.stripe.com/test_fZe5mH6OnbfI4YE3cc',
@@ -56,7 +56,7 @@ const demoPrices = [
     description:
       'An advanced plan for professionals who require extensive AI capabilities.',
     features: [
-      '2M characters per month',
+      '1M characters per month',
       'Access to OpenAI GPT4o',
       'Access to Mistral',
       'Access to Claude',
