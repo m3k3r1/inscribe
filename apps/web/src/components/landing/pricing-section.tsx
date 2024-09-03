@@ -37,7 +37,12 @@ const demoPrices = [
     id: 'price_2',
     name: 'Creator',
     description: 'A premium plan for growing creators',
-    features: ['600000 characters per month', 'Access to OpenAI GPT4o'],
+    features: [
+      '600000 characters per month',
+      'Access to OpenAI GPT4o',
+      'Access to Mistral',
+      'Access to Claude',
+    ],
     isMostPopular: true,
     monthly: {
       stripeLink: 'https://buy.stripe.com/test_fZe5mH6OnbfI4YE3cc',

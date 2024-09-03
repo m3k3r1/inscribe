@@ -15,7 +15,5 @@ export async function getContent(
     .get(`organization/${orgSlug}/project/${projectSlug}/content`)
     .json<GetContentOutput>()
 
-  console.log('result', result)
-
   return result
 }

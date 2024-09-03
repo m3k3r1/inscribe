@@ -27,8 +27,10 @@ interface EditorFilterSelectorProps {
   options: {
     label: string
     value: string
+    disabledOn?: boolean
   }[]
   multiSelect?: boolean
+  disabledOn?: boolean
 }
 
 export function EditorFilterSelector({
@@ -37,6 +39,7 @@ export function EditorFilterSelector({
   selectedValues,
   onValueSelect,
   multiSelect = false,
+  disabledOn = false,
 }: EditorFilterSelectorProps) {
   function isSelected(option: SelectType) {
     return Array.from(selectedValues).some(
@@ -114,6 +117,7 @@ export function EditorFilterSelector({
                 const selected = isSelected(option)
                 return (
                   <CommandItem
+                    disabled={disabledOn && option.disabledOn}
                     key={option.value}
                     onSelect={() => handleSelect(option)}
                   >

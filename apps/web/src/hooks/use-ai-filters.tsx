@@ -7,6 +7,7 @@ type AiFiltersContextProviderProps = {
 export interface SelectType {
   value: string
   label: string
+  disabledOn?: boolean
 }
 
 export type AiFiltersContextDataProps = {

@@ -19,20 +19,23 @@ import { EditorFilterSelector } from './editor-filter-selector'
 
 const models = [
   {
-    value: 'gpt-4o',
-    label: 'OpenAI - gpt4o',
-  },
-  {
     value: 'gpt-4o-mini',
     label: 'OpenAI - gpt4 mini',
   },
   {
+    value: 'gpt-4o',
+    label: 'OpenAI - gpt4o',
+    disabledOn: true,
+  },
+  {
     value: 'claude-3-5-sonnet-20240620',
     label: 'Anthropic - Claude 3.5 Sonnet',
+    disabledOn: true,
   },
   {
     value: 'mistral-large-latest',
     label: 'Mistral - Large',
+    disabledOn: true,
   },
 ]
 
@@ -187,6 +190,7 @@ export default function Projects() {
             options={models}
             selectedValues={modelFilter}
             onValueSelect={setModelFilter}
+            disabledOn={profile?.user?.subscription === 'HOBBY'}
           />
         </div>
       </div>
