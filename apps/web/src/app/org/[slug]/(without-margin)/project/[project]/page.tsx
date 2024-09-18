@@ -25,7 +25,6 @@ const models = [
   {
     value: 'gpt-4o',
     label: 'OpenAI - gpt4o',
-    disabledOn: true,
   },
   {
     value: 'claude-3-5-sonnet-20240620',

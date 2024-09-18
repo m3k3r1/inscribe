@@ -181,7 +181,7 @@ export default function CallToActionSection() {
                 </h1>
                 <p className="mt-2">Turn Knowledge into Action.</p>
                 <Link
-                  href="https://buy.stripe.com/test_14k7uPgoX3Ng2Qw7sw"
+                  href="https://buy.stripe.com/dR603Ma848byemk3cc"
                   className={cn(
                     buttonVariants({
                       size: 'lg',
