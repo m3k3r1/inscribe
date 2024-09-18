@@ -12,8 +12,7 @@ export const uiEnv = createEnv({
     NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL: process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
-  emptyStringAsUndefined: true,
-  skipValidation: true,
+  emptyStringAsUndefined: true
 })
 
 export const env = createEnv({
