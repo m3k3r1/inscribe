@@ -44,12 +44,12 @@ RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm install --frozen-lockfi
 COPY --from=pruner /app/out/full/ .
 
 WORKDIR /app/apps/${PROJECT}
+
 RUN echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" > .env.production 
 RUN echo "NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL=${NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL}" >> .env.production
 RUN echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" >> .env.production
 
-RUN pnpm build
-# RUN turbo build --filter=${PROJECT} --env-mode=loose
+RUN turbo build --filter=${PROJECT} 
 RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
 RUN rm -rf ./**/*/src
 
@@ -61,6 +61,7 @@ ARG PORT
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 RUN npm install next --global
+RUN npm install sharp --global
 
 USER nodejs
 

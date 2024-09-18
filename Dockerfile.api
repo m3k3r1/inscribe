@@ -41,9 +41,9 @@ COPY --from=pruner /app/out/full/ .
 
 WORKDIR /app/apps/${PROJECT}
 RUN pnpm prisma generate
-RUN turbo build --filter=${PROJECT} --env-mode=loose
-# RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
-# RUN rm -rf ./**/*/src
+RUN turbo build --filter=${PROJECT} 
+RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
+RUN rm -rf ./**/*/src
 
 # Final image
 FROM alpine AS runner
@@ -52,7 +52,6 @@ ARG PORT
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
-RUN npm install tsx --global
 
 USER nodejs
 
