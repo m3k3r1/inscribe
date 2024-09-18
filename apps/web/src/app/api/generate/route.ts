@@ -18,7 +18,7 @@ import {
 // Create an OpenAI API client (that's edge friendly!)
 
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 export async function POST(req: Request): Promise<Response> {
   const currentOrg = getCurrentOrg()
