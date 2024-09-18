@@ -60,7 +60,6 @@ ARG PORT
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
-RUN npm install next --global
 RUN npm install sharp --global
 
 USER nodejs
@@ -72,4 +71,4 @@ WORKDIR /app/apps/${PROJECT}
 ENV NODE_ENV=production
 EXPOSE ${PORT}
 
-CMD next start
+CMD npm run start

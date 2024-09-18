@@ -62,4 +62,4 @@ WORKDIR /app/apps/${PROJECT}
 ENV NODE_ENV=production
 EXPOSE ${PORT}
 
-CMD node dist/http/server.js
+CMD npm run start
