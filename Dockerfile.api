@@ -41,7 +41,7 @@ COPY --from=pruner /app/out/full/ .
 
 WORKDIR /app/apps/${PROJECT}
 RUN pnpm prisma generate
-# RUN turbo build --filter=${PROJECT} --env-mode=loose
+RUN turbo build --filter=${PROJECT} --env-mode=loose
 # RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
 # RUN rm -rf ./**/*/src
 
@@ -63,4 +63,4 @@ WORKDIR /app/apps/${PROJECT}
 ENV NODE_ENV=production
 EXPOSE ${PORT}
 
-CMD tsx src/http/server.ts
+CMD node dist/http/server.js

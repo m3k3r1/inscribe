@@ -13,6 +13,7 @@ export const uiEnv = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   emptyStringAsUndefined: true,
+  skipValidation: true,
 })
 
 export const env = createEnv({
