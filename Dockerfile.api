@@ -43,7 +43,7 @@ WORKDIR /app/apps/${PROJECT}
 RUN pnpm prisma generate
 RUN turbo build --filter=${PROJECT} 
 RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
-RUN rm -rf ./**/*/src
+# RUN rm -rf ./**/*/src
 
 # Final image
 FROM alpine AS runner
