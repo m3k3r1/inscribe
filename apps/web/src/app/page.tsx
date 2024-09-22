@@ -14,6 +14,22 @@ export default async function Home() {
         <HeroSection />
         {/* <ClientSection /> */}
         <SphereMask />
+        <div className="flex flex-col items-center justify-center">
+          <h2 className="pb-4 text-2xl font-bold tracking-tight">
+            Inscribe in 2 minutes
+          </h2>
+          <iframe
+            width={400}
+            height={400}
+            src={`https://www.youtube-nocookie.com/embed/lmltXOQm66Q`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={
+              'Inscribe | AI-Powered Editor to Supercharge Your Productivity'
+            }
+            className="aspect-[16/9] w-full p-0 md:w-2/3"
+          />
+        </div>
         <PricingSection />
         <CallToActionSection />
         <Particles
