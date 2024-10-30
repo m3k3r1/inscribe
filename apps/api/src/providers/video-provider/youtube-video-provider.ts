@@ -11,6 +11,16 @@ import type { VideoProvider } from './video-provider'
 export class YoutubeVideoProvider implements VideoProvider {
   private vpnAgent: ytdl.Agent
 
+  private readonly userAgents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+  ]
+
+  private getRandomUserAgent() {
+    return this.userAgents[Math.floor(Math.random() * this.userAgents.length)]
+  }
+
   constructor() {
     const proxies = [env.PROXY_CONFIG_1, env.PROXY_CONFIG_2]
     const randomProxy = proxies[Math.floor(Math.random() * proxies.length)]
@@ -26,17 +36,58 @@ export class YoutubeVideoProvider implements VideoProvider {
   }
 
   async getVideoInfo(uri: string): Promise<string> {
-    try {
-      logger.debug(
-        '[YOUTUBE-PROVIDER] Attempting to fetch video info with proxy',
-      )
-      const info = await ytdl.getInfo(uri, { agent: this.vpnAgent })
-      logger.debug('[YOUTUBE-PROVIDER] Successfully fetched video info')
-      return info.videoDetails.title
-    } catch (error) {
-      logger.error('[YOUTUBE-PROVIDER] Proxy error:', error)
-      throw error
+    let lastError: Error | null = null
+    const maxRetries = 3
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const options = {
+          agent: this.vpnAgent,
+          requestOptions: {
+            headers: {
+              'User-Agent': this.getRandomUserAgent(),
+              Accept:
+                'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.5',
+              Connection: 'keep-alive',
+            },
+          },
+        }
+
+        const info = await ytdl.getInfo(uri, options)
+        logger.debug('[YOUTUBE-PROVIDER] Successfully fetched video info')
+        return info.videoDetails.title
+      } catch (error) {
+        lastError = error
+        logger.warn(
+          `[YOUTUBE-PROVIDER] Attempt ${attempt + 1} failed:`,
+          error.message,
+        )
+
+        // Create new proxy agent for next attempt
+        const [proxyUser, proxyPass] = env.PROXY_AUTH.split(':')
+        const proxies = [
+          env.PROXY_CONFIG_1,
+          env.PROXY_CONFIG_2,
+          env.PROXY_CONFIG_3,
+          env.PROXY_CONFIG_4,
+          env.PROXY_CONFIG_5,
+        ]
+        const randomProxy = proxies[Math.floor(Math.random() * proxies.length)]
+        const proxyUrlWithAuth = randomProxy.replace(
+          'http://',
+          `http://${proxyUser}:${proxyPass}@`,
+        )
+        this.vpnAgent = new HttpsProxyAgent(proxyUrlWithAuth)
+
+        // Wait a bit before retrying
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (attempt + 1)),
+        )
+      }
     }
+
+    throw lastError || new Error('All retry attempts failed')
   }
 
   async loadVideo(title: string, uri: string): Promise<string> {
