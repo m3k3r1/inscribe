@@ -12,25 +12,31 @@ export class YoutubeVideoProvider implements VideoProvider {
   private vpnAgent: ytdl.Agent
 
   constructor() {
-    const proxies = [
-      env.PROXY_CONFIG_1,
-      env.PROXY_CONFIG_2,
-      env.PROXY_CONFIG_3,
-      env.PROXY_CONFIG_4,
-      env.PROXY_CONFIG_5,
-    ]
+    const proxies = [env.PROXY_CONFIG_1, env.PROXY_CONFIG_2]
     const randomProxy = proxies[Math.floor(Math.random() * proxies.length)]
+    logger.debug('[YOUTUBE-PROVIDER] Using proxy:', randomProxy)
+
+    const proxyUrl = new URL(randomProxy)
+    proxyUrl.username = env.PROXY_AUTH.split(':')[0]
+    proxyUrl.password = env.PROXY_AUTH.split(':')[1]
+
     this.vpnAgent = ytdl.createProxyAgent({
-      uri: randomProxy,
-      headers: {
-        'Proxy-Authorization': `Basic ${Buffer.from(env.PROXY_AUTH).toString('base64')}`,
-      },
+      uri: proxyUrl.toString(),
     })
   }
 
   async getVideoInfo(uri: string): Promise<string> {
-    const info = await ytdl.getInfo(uri, { agent: this.vpnAgent })
-    return info.videoDetails.title
+    try {
+      logger.debug(
+        '[YOUTUBE-PROVIDER] Attempting to fetch video info with proxy',
+      )
+      const info = await ytdl.getInfo(uri, { agent: this.vpnAgent })
+      logger.debug('[YOUTUBE-PROVIDER] Successfully fetched video info')
+      return info.videoDetails.title
+    } catch (error) {
+      logger.error('[YOUTUBE-PROVIDER] Proxy error:', error)
+      throw error
+    }
   }
 
   async loadVideo(title: string, uri: string): Promise<string> {
