@@ -1,81 +1,104 @@
-# Turborepo starter
+# Inscribe
 
-This is an official starter Turborepo.
+AI-assisted research that turns long videos, PDFs, and documents into clean, reusable blocks of facts and quotes—ready for drafting posts, scripts, and articles.
 
-## Using this example
+> Built as a **Turborepo** monorepo with **pnpm**, **Next.js**, and an **API service**, with dockerized development and **OpenTelemetry** hooks for observability.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
-```
+## Table of Contents
 
-## What's inside?
+- [Demo](#demo)
+- [Features](#features)
+- [Monorepo Structure](#monorepo-structure)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Run Locally (pnpm)](#run-locally-pnpm)
+  - [Run with Docker](#run-with-docker)
+- [Scripts](#scripts)
+- [Architecture](#architecture)
+- [Observability](#observability)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
-This Turborepo includes the following packages/apps:
+---
 
-### Apps and Packages
+## Demo
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+> TODO: Add a short loom or gif here showcasing: import YouTube URL → extraction → blocks → generate post.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Live: _TBD_
+- Loom: _TBD_
 
-### Utilities
+---
 
-This Turborepo has some additional tools already setup for you:
+## Features
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- **Multi-source ingestion**
+  - YouTube URLs (transcripts), PDFs, and document uploads.
+- **Block extraction**
+  - Pull out key facts, quotes, timestamps, and citations into portable “blocks”.
+- **Writing accelerators**
+  - Turn blocks into outlines, posts, scripts, and threads with your voice & templates.
+- **Templates**
+  - Notion-style templates for tweets/threads, blog posts, YouTube scripts, show notes.
+- **Multilingual**
+  - End-to-end TypeScript; language prompts/templates can be localized.
+- **Team-ready**
+  - Monorepo packages for shared UI, configs, and types.
 
-### Build
+> Note: Some features are in progress in the codebase; this README describes the intended product and how the repo is laid out.
 
-To build all apps and packages, run the following command:
+---
 
-```
-cd my-turborepo
-pnpm build
-```
+## Monorepo Structure
 
-### Develop
+.
+├─ apps/
+│  ├─ web/           # Next.js app (frontend)
+│  └─ api/           # API service (Node/TS; framework TBD)
+├─ packages/
+│  ├─ ui/            # Shared React UI (design system)
+│  ├─ eslint-config/ # ESLint config package
+│  └─ tsconfig/      # Base TS configs
+├─ config/           # (Optional) shared config, env, etc.
+├─ docker-compose.yaml
+├─ Dockerfile.web
+├─ Dockerfile.api
+├─ otel-collector-config.yaml
+├─ turbo.json
+├─ pnpm-workspace.yaml
+└─ package.json
 
-To develop all apps and packages, run the following command:
 
-```
-cd my-turborepo
-pnpm dev
-```
 
-### Remote Caching
+> The repo currently uses the Turborepo layout with `apps/` and `packages/`
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+---
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+## Tech Stack
 
-```
-cd my-turborepo
-npx turbo login
-```
+- **Frontend**: Next.js (TypeScript), React
+- **API**: Node.js (TypeScript)  
+  - Framework: _TBD_ (NestJS/Express/Fastify)
+- **Monorepo Tooling**: Turborepo + pnpm
+- **AI Providers**: OpenAI / Anthropic / (optional) Mistral
+- **Observability**: OpenTelemetry Collector (config provided)
+- **Containerization**: Docker, `docker-compose`
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+---
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Getting Started
 
-```
-npx turbo link
-```
+### Prerequisites
 
-## Useful Links
+- **Node.js** ≥ 20.x
+- **pnpm** ≥ 9.x
+- **Docker** (optional, for containerized setup)
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+```bash
+# Install pnpm (if needed)
+npm i -g pnpm
